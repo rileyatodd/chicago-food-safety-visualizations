@@ -10,7 +10,7 @@ class VisualizationSurface extends Component {
     const json = this.props.json || {}
     return (
       <div>
-        <h3>{keys(json).length}</h3>
+        <h3># of Unique Establishments: {keys(json).length}</h3>
         <FoodMapFilters handleUpdate={this.props.handleUpdate} 
                         handlePassFailChange={this.props.handlePassFailChange} 
                         handleViewTypeChange={this.props.handleViewTypeChange} />

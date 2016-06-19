@@ -14,12 +14,11 @@ class FoodSafetyMap extends Component {
   componentDidUpdate() {
     if (!window.heatMap) {
       window.heatMap = new google.maps.visualization.HeatmapLayer({
-        data: map(loc => new google.maps.LatLng(loc.position), this.props.locations)
+        data: map(loc => new google.maps.LatLng(loc.position), this.props.locations),
+        radius: 10
       });
     }
-
-    console.log('locations', map(loc => new google.maps.LatLng(loc.position), this.props.locations))
-
+    window.heatMap.set('radius', 20)
     window.heatMap.setMap(this.props.viewType == 'heatmap' ? window.gMap : null)
     window.heatMap.setData(map(loc => new google.maps.LatLng(loc.position), this.props.locations))
   }

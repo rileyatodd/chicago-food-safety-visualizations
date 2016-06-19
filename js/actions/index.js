@@ -1,7 +1,7 @@
 import { getJSON, throwErr } from '../util'
 import { isEmpty, compose, all, identity, values } from 'ramda'
 
-const remoteDataUrl = 'https://data.cityofchicago.org/resource/cwig-ma7x.json?$order=inspection_date DESC&$limit=300'
+const remoteDataUrl = 'https://data.cityofchicago.org/resource/cwig-ma7x.json?$order=inspection_date DESC&$limit=1000'
 
 export const LOAD_DATA_FROM_REMOTE = 'LOAD_DATA_FROM_REMOTE'
 export const REQUEST_DATA_FROM_REMOTE = 'REQUEST_DATA_FROM_REMOTE'

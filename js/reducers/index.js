@@ -31,7 +31,7 @@ function selectedLocation(state = null, action) {
   return state
 }
 
-function viewType(state = 'heatmap', action) {
+function viewType(state = 'marker', action) {
   switch (action.type) {
     case CHANGE_VIEW_TYPE: {
       return action.viewType
