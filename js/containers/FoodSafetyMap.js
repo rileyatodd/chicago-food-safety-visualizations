@@ -78,12 +78,13 @@ function mapStateToProps(state) {
     }
   }
 
-  // {k: v} -> [Lens]
+  // {filterType: {filterName: f} -> [Lens]
   let filterLenses = compose(map(lensPath), toPairs)
 
+  // [Lens] -> [Predicate]
   let viewsIntoFilters = map(flip(view)(filters))
 
-  // [Lens] -> [pred]
+  // {filterType: {filterName: f} -> [Predicate]
   let activeFilters = compose(viewsIntoFilters, filterLenses)
 
   return {
