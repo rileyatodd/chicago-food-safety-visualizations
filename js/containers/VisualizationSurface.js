@@ -7,10 +7,10 @@ import FoodMapFilters from '../components/FoodMapFilters'
 
 class VisualizationSurface extends Component {
   render() {
-    const json = this.props.json || {}
+    const establishments = this.props.establishments || {}
     return (
       <div>
-        <h3># of Unique Establishments: {keys(json).length}</h3>
+        <h3># of Unique Establishments: {keys(establishments).length}</h3>
         <FoodMapFilters handleUpdate={this.props.handleUpdate} 
                         handlePassFailChange={this.props.handlePassFailChange} 
                         handleViewTypeChange={this.props.handleViewTypeChange} />
@@ -21,14 +21,14 @@ class VisualizationSurface extends Component {
 }
 
 VisualizationSurface.propTypes = {
-  json: PropTypes.object,
+  establishments: PropTypes.object,
   handleUpdate: PropTypes.func.isRequired,
   handlePassFailChange: PropTypes.func.isRequired,
   handleViewTypeChange: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
-  json: state.data
+  establishments: state.data
 })
 
 const mapDispatchToProps = (dispatch) => ({

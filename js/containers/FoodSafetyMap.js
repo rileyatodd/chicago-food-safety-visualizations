@@ -3,11 +3,13 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { GoogleMapLoader, GoogleMap, Marker } from "react-google-maps"
-import { curry, view, lensPath, toPairs, allPass, map, flip, compose, values, filter, prop, any, none, equals, T } from 'ramda'
+import { curry, map, compose } from 'ramda'
 import { selectLocation } from '../actions'
 import LocationInfo from '../components/LocationInfo'
+import { filteredEstablishments } from '../model'
 
-const renderMarker = curry((handleClick, location) => <Marker {...location} key={location.license} onClick={() => handleClick(location.license)} />)
+const renderMarker = curry((handleClick, location) => 
+  <Marker {...location} key={location.license} onClick={() => handleClick(location.license)} />)
 
 class FoodSafetyMap extends Component {
 
@@ -42,7 +44,7 @@ class FoodSafetyMap extends Component {
                 }
               }}
               defaultZoom={15}
-              defaultCenter={{ lat: 41.879272, lng: -87.639737 }}
+              defaultCenter={{lat: 41.879272, lng: -87.639737}}
             >
               {this.props.viewType == 'marker' ? map(renderMarker(this.props.handleMarkerClicked), this.props.locations) : ''}
             </GoogleMap>
@@ -64,32 +66,9 @@ FoodSafetyMap.propTypes = {
 
 function mapStateToProps(state) {
 
-  const allResults = compose(map(prop('results')), prop('inspections'))
-
-  const hasNotFailed = compose(none(equals('Fail')), allResults)
-
-  const hasFailed = compose(any(equals('Fail')), allResults)
-
-  let filters = {
-    passFail: {
-      all : T,
-      pass: hasNotFailed,
-      fail: hasFailed
-    }
-  }
-
-  // {filterType: {filterName: f} -> [Lens]
-  let filterLenses = compose(map(lensPath), toPairs)
-
-  // [Lens] -> [Predicate]
-  let viewsIntoFilters = map(flip(view)(filters))
-
-  // {filterType: {filterName: f} -> [Predicate]
-  let activeFilters = compose(viewsIntoFilters, filterLenses)
-
   return {
     containerElementProps: {},
-    locations: filter(allPass(activeFilters(state.filters)), values(state.data)),
+    locations: filteredEstablishments(state.filters, state.data),
     selectedLocation: state.data[state.selectedLocation],
     viewType: state.viewType
   }
