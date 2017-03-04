@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react'
+import styles from 'styles/FoodMapFilters.css'
 
 export default function FoodMapFilters({handleUpdate, handlePassFailChange, handleViewTypeChange}) {
   return (
-    <div style={{float: 'right', marginBottom: '15px'}}>
+    <div className={styles.container}>
       <div>
         <label style={{display: 'block'}}>Result Filter</label>
         <select defaultValue="all" onChange={handlePassFailChange}>

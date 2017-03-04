@@ -1,0 +1,36 @@
+.inspectionList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.inspectionList > li {
+  margin-bottom: 40px;
+}
+
+.date {
+  font-size: 20px;
+}
+
+.result {
+  font-size: 20px;
+}
+
+.container dt {
+  font-weight: bold;
+}
+
+.container dd {
+  margin: 0;
+}
+
+.metadataContainer dl {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.metadataContainer dl > * {
+  min-width: 100px;
+  margin: 10px 0;
+}

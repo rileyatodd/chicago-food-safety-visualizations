@@ -1,12 +1,19 @@
 import React, { PropTypes } from 'react'
+import { parseViolations } from 'models'
+import styles from 'styles/Violations.css'
 
 export default function Violations({violationsStr}) {
-  let violationsArr = violationsStr.split(/| [0-9]+\./)
 
   return (
-    <div>
-      violationsArr.map(violation => <div>{violation}</div>)
-    </div>
+    <ul className={styles.list}>
+      {parseViolations(violationsStr).map(({title, comments}, i) =>
+        <li key={i}>
+          <div>{title}</div>
+          {comments && <div className={styles.commentsLabel}>Comments</div>}
+          <div>{comments}</div>
+        </li>
+      )}
+    </ul>
   )
 }
 

@@ -2,16 +2,15 @@ import React, { Component, PropTypes } from 'react'
 import { Provider } from 'react-redux'
 import VisualizationSurface from './VisualizationSurface'
 
-export default class Root extends Component {
-  render() {
-    const { store } = this.props
-    return (
-      <Provider store={store}>
-        <VisualizationSurface />
-      </Provider>
-    )
-  }
+export default function Root({ store }) {
+  return (
+    <Provider store={store}>
+      <VisualizationSurface />
+    </Provider>
+  )
 }
+
+Root.displayName = 'Root'
 
 Root.propTypes = {
   store: PropTypes.object.isRequired

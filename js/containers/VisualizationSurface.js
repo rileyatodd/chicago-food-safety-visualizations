@@ -4,17 +4,26 @@ import { connect } from 'react-redux'
 import { prop, compose, keys } from 'ramda'
 import FoodSafetyMap from './FoodSafetyMap'
 import FoodMapFilters from '../components/FoodMapFilters'
+import LocationInfo from 'components/LocationInfo'
+import styles from 'styles/VisualizationSurface.css'
 
 class VisualizationSurface extends Component {
   render() {
-    const establishments = this.props.establishments || {}
+    let { establishments = {}
+        , handleUpdate
+        , handlePassFailChange
+        , handleViewTypeChange
+        , selectedLocation
+        } = this.props
+
     return (
-      <div>
+      <div className={styles.root}>
         <h3># of Unique Establishments: {keys(establishments).length}</h3>
-        <FoodMapFilters handleUpdate={this.props.handleUpdate} 
-                        handlePassFailChange={this.props.handlePassFailChange} 
-                        handleViewTypeChange={this.props.handleViewTypeChange} />
+        <FoodMapFilters handleUpdate={handleUpdate}
+                        handlePassFailChange={handlePassFailChange}
+                        handleViewTypeChange={handleViewTypeChange} />
         <FoodSafetyMap />
+        <LocationInfo location={selectedLocation} />
       </div>
     )
   }
@@ -24,11 +33,13 @@ VisualizationSurface.propTypes = {
   establishments: PropTypes.object,
   handleUpdate: PropTypes.func.isRequired,
   handlePassFailChange: PropTypes.func.isRequired,
-  handleViewTypeChange: PropTypes.func.isRequired
+  handleViewTypeChange: PropTypes.func.isRequired,
+  selectedLocation: PropTypes.object
 }
 
 const mapStateToProps = (state) => ({
-  establishments: state.data
+  establishments: state.data,
+  selectedLocation: state.data[state.selectedLocation],
 })
 
 const mapDispatchToProps = (dispatch) => ({

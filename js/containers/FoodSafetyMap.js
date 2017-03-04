@@ -5,7 +5,6 @@ import { connect } from 'react-redux'
 import { GoogleMapLoader, GoogleMap, Marker } from "react-google-maps"
 import { curry, map, compose } from 'ramda'
 import { selectLocation } from 'actions'
-import LocationInfo from 'components/LocationInfo'
 import { filteredEstablishments } from 'models'
 
 const renderMarker = curry((handleClick, location) =>
@@ -36,27 +35,24 @@ class FoodSafetyMap extends Component {
         } = this.props
 
     return (
-      <div>
-        <GoogleMapLoader
-          containerElement={<div style={{height: "400px", width: "500px"}} />}
-          googleMapElement={
-            <GoogleMap
-              ref={mapElement => {
-                this.gMap = mapElement
-                if (mapElement) {
-                  window.gMap = mapElement.props.map
-                }
-              }}
-              defaultZoom={15}
-              defaultCenter={{lat: 41.879272, lng: -87.639737}}
-            >
-              {viewType == 'marker' &&
-                locations.map(renderMarker(handleMarkerClicked))}
-            </GoogleMap>
-          }
-        />
-        <LocationInfo location={selectedLocation} />
-      </div>
+      <GoogleMapLoader
+        containerElement={<div style={{minHeight: "400px", maxWidth: "500px"}} />}
+        googleMapElement={
+          <GoogleMap
+            ref={mapElement => {
+              this.gMap = mapElement
+              if (mapElement) {
+                window.gMap = mapElement.props.map
+              }
+            }}
+            defaultZoom={15}
+            defaultCenter={{lat: 41.879272, lng: -87.639737}}
+          >
+            {viewType == 'marker' &&
+              locations.map(renderMarker(handleMarkerClicked))}
+          </GoogleMap>
+        }
+      />
     )
   }
 }
@@ -64,7 +60,6 @@ class FoodSafetyMap extends Component {
 FoodSafetyMap.propTypes = {
   handleMarkerClicked: PropTypes.func.isRequired,
   locations: PropTypes.array,
-  selectedLocation: PropTypes.object,
   viewType: PropTypes.string.isRequired
 }
 

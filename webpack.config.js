@@ -27,6 +27,7 @@ module.exports =
     , reducers: path.resolve(__dirname, 'js/reducers')
     , actions: path.resolve(__dirname, 'js/actions')
     , util: path.resolve(__dirname, 'js/util')
+    , styles: path.resolve(__dirname, 'styles')
     }
   }
 }

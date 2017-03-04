@@ -1,44 +1,58 @@
 import React, { PropTypes } from 'react'
-import moment from 'moment'
+import { formatDate } from 'util'
+import { lastFailureDate, countResults } from 'models'
 import Violations from 'components/Violations'
+import styles from 'styles/LocationInfo.css'
 
 const LocationInfo = ({ location }) => {
   if (!location) return <div style={{display: 'none'}}></div>
 
-  let { address, dba_name, facility_type } = location.inspections[0]
+  let { inspections } = location
+  let { address, dba_name, facility_type } = inspections[0]
+  let resultCounts = countResults(inspections)
   return (
-    <div>
-      <div>
+    <div className={styles.container}>
+      <div className={styles.metadataContainer}>
         <h3>{dba_name}</h3>
         <dl>
-          <dt>Address</dt>
-          <dd>{address}</dd>
-          <dt>Type</dt>
-          <dd>{facility_type}</dd>
+          <div>
+            <dt>Address</dt>
+            <dd>{address}</dd>
+          </div>
+          <div>
+            <dt>Type</dt>
+            <dd>{facility_type}</dd>
+          </div>
+          <div>
+            <dt>Last Failure</dt>
+            <dd>
+              {lastFailureDate(inspections).map(formatDate('MMM D YYYY'))
+                                           .getOrElse('None')}
+            </dd>
+          </div>
+          <div>
+            <dt># of Failures</dt>
+            <dd>{resultCounts.Fail || 0}</dd>
+          </div>
+          <div>
+            <dt># of Passes</dt>
+            <dd>{(resultCounts.Pass || 0) + (resultCounts['Pass w/ Conditions'] || 0)}</dd>
+          </div>
         </dl>
       </div>
       <div>
         <h4>Inspections</h4>
-        <table>
-          <thead>
-            <tr>
-              <th>Inpection Date</th>
-              <th>Result</th>
-              <th>Violations and Comments</th>
-            </tr>
-          </thead>
-          <tbody>
-            {location.inspections.map(inspection => (
-              <tr key={inspection.inspection_id}>
-                <td>{moment(inspection.inspection_date).format('MMM D YYYY')}</td>
-                <td>{inspection.results}</td>
-                <td>
-                  <Violations violationsStr={inspection.violations} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <ol className={styles.inspectionList}>
+          {inspections.map(inspection => (
+            <li key={inspection.inspection_id}>
+              <div className={styles.date}>{formatDate('MMM D YYYY', inspection.inspection_date)}</div>
+              <div className={styles.result}>{inspection.results}</div>
+              <div>
+                <Violations violationsStr={inspection.violations || ""} />
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
     </div>
   )
