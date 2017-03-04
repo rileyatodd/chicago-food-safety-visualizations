@@ -5,7 +5,7 @@ import Violations from 'components/Violations'
 import styles from 'styles/LocationInfo.css'
 
 const LocationInfo = ({ location }) => {
-  if (!location) return <div style={{display: 'none'}}></div>
+  if (!location) return <div style={{height: '20px'}}></div>
 
   let { inspections } = location
   let { address, dba_name, facility_type } = inspections[0]
