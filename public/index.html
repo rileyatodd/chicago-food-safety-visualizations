@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Food Safety</title>
+  <link rel="stylesheet" href="/stylesheets/index.css">
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAH7gFY20sVU19X2H35QvMumqZssuWQ2VI&libraries=geometry,visualization"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Chicago Food Safety Inspections</h1>
+    <h2>About</h2>
+    <p>
+      This a project I quickly threw together that sources food safety
+      inspection data from the
+      <a href="http://data.cityofchicago.org">data.cityofchicago.org</a>
+      and plots it on a map. Upon clicking the 'Search In Map'
+      button, the map will be populated with data of the 1000 most recent
+      inspections of establishments located within the bounds of the map.
+      Note that means there probably won't be 1000 establishments displayed at
+      once on the map, and the total number of unique inspections is displayed
+      above the map.
+    </p>
+    <h3>Filtering</h3>
+    <p>
+      Once the inspection data has been loaded you can filter it by selecting a
+      result filter.
+    </p>
+    <h3>Data Display Types</h3>
+    <p>
+      You can view the plotted data in two different ways. One way is to place
+      a marker on the map for each establishment. This view has the benefit of
+      being able to click on the markers to see the results and violations of
+      the inspections. The other way to view the data is via a heatmap, which
+      is more helpful in determing the relative density of locations. Combining
+      the heatmap view with the 'Have failed at least once' filter allows one
+      to see areas where food inspection failures are more common.
+    </p>
+    <div id="root"></div>
+  </div>
+  <script src="/webpack/bundle.js"></script>
+</body>
+</html>

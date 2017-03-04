@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux'
-import { CHANGE_VIEW_TYPE, RECEIVE_DATA_FROM_REMOTE, PASS_FAIL_CHANGE, SELECT_LOCATION } from '../actions'
+import { CHANGE_VIEW_TYPE, RECEIVE_DATA_FROM_REMOTE, PASS_FAIL_CHANGE, SELECT_LOCATION } from 'actions'
 import { set, lensProp } from 'ramda'
-import { establishmentsByLicense } from '../model'
+import { establishmentsByLicense } from 'models'
 
 // {Int: Establishment} -> Action -> {Int: Establishment}
 function data(state = {}, action) {
   switch (action.type) {
-    case RECEIVE_DATA_FROM_REMOTE: {   
+    case RECEIVE_DATA_FROM_REMOTE: {
       return establishmentsByLicense(action.data)
     }
   }

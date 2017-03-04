@@ -1,0 +1,95 @@
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  margin: 0;
+}
+
+.navbar {
+  background-color: #047CB0;
+  color: #FFF;
+  overflow: auto;
+}
+
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.navbar .navbar-brand {
+  font-size: 18px;
+  float: left;
+  padding: 15px;
+}
+
+.navbar-right {
+  float: right;
+  text-align: center;
+  padding: 15px;
+}
+
+.navbar ul {
+  background-color: #047CB0;
+}
+
+.navbar li {
+  padding: 15px;
+}
+
+.dropdown ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dropdown.engaged ul {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 50px;
+  width: 200px;
+}
+
+.dropdown.engaged.open ul {
+  display: block;
+  box-shadow: 0 0 4px 4px #61c7f5;
+}
+
+.navbar li {
+  display: inline;
+}
+
+.dropdown.engaged li {
+  display: block;
+  padding: 10px 10px;
+  cursor: pointer;
+}
+
+.dropdown.engaged li:hover {
+  background-color: #FFF;
+}
+
+.dropdown.engaged li:hover a {
+  color: #047CB0;
+}
+
+.dropdown-toggle {
+  display: none;
+}
+
+.dropdown.engaged .dropdown-toggle {
+  display: block;
+  cursor: pointer;
+}
+
+.dropdown.engaged .dropdown-toggle:after {
+  content: '\25BC';
+}
+
+.dropdown.engaged.open .dropdown-toggle:after {
+  content: '\25B2'
+}
+
+.container {
+  padding: 10px;
+  margin: 10px auto;
+  max-width: 720px;
+}

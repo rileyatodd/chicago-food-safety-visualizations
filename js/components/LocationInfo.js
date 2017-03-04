@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
-import { map } from 'ramda'
 import moment from 'moment'
+import Violations from 'components/Violations'
 
 const LocationInfo = ({ location }) => {
   if (!location) return <div style={{display: 'none'}}></div>
@@ -19,7 +19,7 @@ const LocationInfo = ({ location }) => {
       </div>
       <div>
         <h4>Inspections</h4>
-        <table className="table table-striped">
+        <table>
           <thead>
             <tr>
               <th>Inpection Date</th>
@@ -28,13 +28,15 @@ const LocationInfo = ({ location }) => {
             </tr>
           </thead>
           <tbody>
-            {map(inspection => (
+            {location.inspections.map(inspection => (
               <tr key={inspection.inspection_id}>
                 <td>{moment(inspection.inspection_date).format('MMM D YYYY')}</td>
                 <td>{inspection.results}</td>
-                <td>{inspection.violations}</td>
+                <td>
+                  <Violations violationsStr={inspection.violations} />
+                </td>
               </tr>
-            ))(location.inspections)}
+            ))}
           </tbody>
         </table>
       </div>
