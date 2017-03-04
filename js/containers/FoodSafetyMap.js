@@ -36,7 +36,7 @@ class FoodSafetyMap extends Component {
 
     return (
       <GoogleMapLoader
-        containerElement={<div style={{minHeight: "400px", maxWidth: "500px"}} />}
+        containerElement={<div style={{height: "400px"}} />}
         googleMapElement={
           <GoogleMap
             ref={mapElement => {
