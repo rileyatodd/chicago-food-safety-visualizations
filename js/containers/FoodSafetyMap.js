@@ -1,11 +1,9 @@
 /* global google */
-
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { GoogleMapLoader, GoogleMap, Marker } from "react-google-maps"
 import { curry, map, compose } from 'ramda'
-import { selectLocation } from 'actions'
-import { filteredEstablishments } from 'models'
+import { filteredEstablishments, selectLocation } from 'models'
 
 const renderMarker = curry((handleClick, location) =>
   <Marker {...location}

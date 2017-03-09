@@ -3,9 +3,10 @@ import { allPass, values, filter, groupBy
        , toPairs, T, compose, map
        , prop, any, none, equals
        , replace, split, identity, propEq
-       , find, countBy
+       , find, countBy, isEmpty, all
        } from 'ramda'
-import { safeFind } from 'util'
+import { getJSON, throwErr, safeFind, set_ } from 'util'
+import { actionify } from 'util/redux'
 
 // [Establishment] -> [Result]
 const allResults = compose(map(prop('results')), prop('inspections'))
@@ -25,16 +26,16 @@ let filters = {
   }
 }
 
-// {filterType: {filterName: f} -> [Lens]
+// {filterType: filterName} -> [Lens]
 let filterLenses = compose(map(lensPath), toPairs)
 
 // [Lens] -> [Predicate]
 let viewsIntoFilters = map(flip(view)(filters))
 
-// {filterType: {filterName: f} -> [Predicate]
+// {filterType: filterName} -> [Predicate]
 let activeFilters = compose(viewsIntoFilters, filterLenses)
 
-// {filterType: {filterName: f} -> {license: Establishment} -> [Establishment]
+// {filterType: filterName} -> {license: Establishment} -> [Establishment]
 export const filteredEstablishments =
   (filterNames, data) => filter(allPass(activeFilters(filterNames)), values(data))
 
@@ -71,3 +72,31 @@ export const lastFailureDate = compose( map(prop('inspection_date'))
 
 // [Inspection] -> {Pass: Integer, Fail: Integer, Pass w/ Exceptions: Integer}
 export const countResults = countBy(prop('results'))
+
+
+////// STUFF FOR INTERACTING WITH data.cityofchicago.org's SODA endpoint
+
+// {north, south, east, west} -> String
+const buildGeoQuery = (bounds) =>
+  `latitude > ${bounds.south} AND latitude < ${bounds.north} AND longitude > ${bounds.west} AND longitude < ${bounds.east}`
+
+const remoteDataUrl = 'https://data.cityofchicago.org/resource/cwig-ma7x.json?$order=inspection_date DESC&$limit=1000'
+
+export const loadDataFromRemote = (bounds) => (dispatch, getState) => {
+  let query = '&$where='
+  if (bounds && !isEmpty(values(bounds)) && all(identity, values(bounds))) {
+    query = query + buildGeoQuery(bounds.toJSON())
+  }
+  dispatch(actionify('UI', setLoadingData)(true))
+  getJSON(remoteDataUrl + query).fork(
+    throwErr,
+    compose(dispatch, actionify('data', establishmentsByLicense))
+  )
+}
+
+export const setLoadingData = bool => set_('loading', bool)
+export const updateFailFilter = filter => set_(['filters', 'passFail'], filter)
+export const selectLocation = x => set_('selectedLocation', x)
+export const changeViewType = x => set_('viewType', x)
+
+////////////////////////////////////////////////////////////////////////////

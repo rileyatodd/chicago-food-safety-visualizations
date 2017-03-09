@@ -1,11 +1,12 @@
 import React, { Component, PropTypes } from 'react'
-import { changeViewType, loadDataFromRemote, updateFailFilter } from '../actions'
+import { changeViewType, updateFailFilter } from '../actions'
 import { connect } from 'react-redux'
 import { prop, compose, keys } from 'ramda'
 import FoodSafetyMap from './FoodSafetyMap'
 import FoodMapFilters from '../components/FoodMapFilters'
 import LocationInfo from 'components/LocationInfo'
 import styles from 'styles/VisualizationSurface.css'
+import { loadDataFromRemote } from 'models'
 
 class VisualizationSurface extends Component {
   render() {
