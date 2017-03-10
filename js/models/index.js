@@ -3,9 +3,9 @@ import { allPass, values, filter, groupBy
        , toPairs, T, compose, map
        , prop, any, none, equals
        , replace, split, identity, propEq
-       , find, countBy, isEmpty, all
+       , find, countBy, isEmpty, all, always as K
        } from 'ramda'
-import { getJSON, throwErr, safeFind, set_ } from 'util'
+import { getJSON, throwErr, safeFind, set_, trace } from 'util'
 import { actionify } from 'util/redux'
 
 // [Establishment] -> [Result]
@@ -87,20 +87,17 @@ const remoteDataUrl = 'https://data.cityofchicago.org/resource/cwig-ma7x.json?$o
 
 export const loadDataFromRemote = (bounds) => (dispatch, getState) => {
   let query = validateBounds(bounds) ? buildGeoQuery(bounds.toJSON()) : ''
-  dispatch(actionify('UI', setLoadingData)(true))
+  dispatch(setLoadingData(true))
   getJSON(remoteDataUrl + query).fork(
     throwErr,
-    compose(dispatch, actionify('data'), d => _ => establishmentsByLicense(d))
-    // This is soooooo awkward. Have to do a weird thunky thing here because
-    // useActionF always applys the args and then tries to apply that to state
-    // so if you just want to wholesale replace state you have to make it aware
-    // of the state argument that you just want to ignore anyways
+    compose(dispatch, setData)
   )
 }
 
-export const setLoadingData = bool => set_('loading', bool)
-export const updateFailFilter = filter => set_(['filters', 'passFail'], filter)
-export const selectLocation = x => set_('selectedLocation', x)
-export const changeViewType = x => set_('viewType', x)
+export const setLoadingData = actionify('UI', 'setLoading', set_('loading'))
+export const setData = actionify('data', 'setData', compose(K, establishmentsByLicense))
+export const setPassFailFilter = actionify('UI', 'setPassFailFilter', set_(['filters', 'passFail']))
+export const selectLocation = actionify('UI', 'selectLocation', set_('selectedLocation'))
+export const setMarkerType = actionify('UI', 'changeMarkerType', set_('viewType'))
 
 ////////////////////////////////////////////////////////////////////////////

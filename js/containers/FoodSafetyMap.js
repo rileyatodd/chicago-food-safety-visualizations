@@ -63,8 +63,8 @@ FoodSafetyMap.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    locations: filteredEstablishments(state.filters, state.data),
-    selectedLocation: state.data[state.selectedLocation],
+    locations: filteredEstablishments(state.ui.filters, state.data),
+    selectedLocation: state.data[state.ui.selectedLocation],
     viewType: state.ui.viewType
   }
 }

@@ -5,7 +5,7 @@ import FoodSafetyMap from './FoodSafetyMap'
 import FoodMapFilters from '../components/FoodMapFilters'
 import LocationInfo from 'components/LocationInfo'
 import styles from 'styles/VisualizationSurface.css'
-import { loadDataFromRemote, changeViewType, updateFailFilter } from 'models'
+import { loadDataFromRemote, setMarkerType, setPassFailFilter } from 'models'
 import { actionify } from 'util/redux'
 
 class VisualizationSurface extends Component {
@@ -40,13 +40,13 @@ VisualizationSurface.propTypes = {
 
 const mapStateToProps = (state) => ({
   establishments: state.data,
-  selectedLocation: state.data[state.selectedLocation],
+  selectedLocation: state.data[state.ui.selectedLocation],
 })
 
 const mapDispatchToProps = (dispatch) => ({
   handleUpdate: compose(dispatch, loadDataFromRemote),
-  handlePassFailChange: compose(dispatch, actionify('UI', updateFailFilter), prop('value'), prop('target')),
-  handleViewTypeChange: compose(dispatch, actionify('UI', changeViewType), prop('value'), prop('target'))
+  handlePassFailChange: compose(dispatch, setPassFailFilter, prop('value'), prop('target')),
+  handleViewTypeChange: compose(dispatch, setMarkerType, prop('value'), prop('target'))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(VisualizationSurface)
