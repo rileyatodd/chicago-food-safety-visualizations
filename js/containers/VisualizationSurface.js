@@ -1,12 +1,12 @@
 import React, { Component, PropTypes } from 'react'
-import { changeViewType, updateFailFilter } from '../actions'
 import { connect } from 'react-redux'
 import { prop, compose, keys } from 'ramda'
 import FoodSafetyMap from './FoodSafetyMap'
 import FoodMapFilters from '../components/FoodMapFilters'
 import LocationInfo from 'components/LocationInfo'
 import styles from 'styles/VisualizationSurface.css'
-import { loadDataFromRemote } from 'models'
+import { loadDataFromRemote, changeViewType, updateFailFilter } from 'models'
+import { actionify } from 'util/redux'
 
 class VisualizationSurface extends Component {
   render() {
@@ -45,8 +45,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   handleUpdate: compose(dispatch, loadDataFromRemote),
-  handlePassFailChange: compose(dispatch, updateFailFilter, prop('value'), prop('target')),
-  handleViewTypeChange: compose(dispatch, changeViewType, prop('value'), prop('target'))
+  handlePassFailChange: compose(dispatch, actionify('UI', updateFailFilter), prop('value'), prop('target')),
+  handleViewTypeChange: compose(dispatch, actionify('UI', changeViewType), prop('value'), prop('target'))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(VisualizationSurface)

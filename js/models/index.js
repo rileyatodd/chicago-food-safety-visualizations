@@ -76,21 +76,25 @@ export const countResults = countBy(prop('results'))
 
 ////// STUFF FOR INTERACTING WITH data.cityofchicago.org's SODA endpoint
 
+const validateBounds = bounds => bounds && !isEmpty(values(bounds)) 
+                                        && all(identity, values(bounds))
+
 // {north, south, east, west} -> String
 const buildGeoQuery = (bounds) =>
-  `latitude > ${bounds.south} AND latitude < ${bounds.north} AND longitude > ${bounds.west} AND longitude < ${bounds.east}`
+  `&$where=latitude > ${bounds.south} AND latitude < ${bounds.north} AND longitude > ${bounds.west} AND longitude < ${bounds.east}`
 
 const remoteDataUrl = 'https://data.cityofchicago.org/resource/cwig-ma7x.json?$order=inspection_date DESC&$limit=1000'
 
 export const loadDataFromRemote = (bounds) => (dispatch, getState) => {
-  let query = '&$where='
-  if (bounds && !isEmpty(values(bounds)) && all(identity, values(bounds))) {
-    query = query + buildGeoQuery(bounds.toJSON())
-  }
+  let query = validateBounds(bounds) ? buildGeoQuery(bounds.toJSON()) : ''
   dispatch(actionify('UI', setLoadingData)(true))
   getJSON(remoteDataUrl + query).fork(
     throwErr,
-    compose(dispatch, actionify('data', establishmentsByLicense))
+    compose(dispatch, actionify('data'), d => _ => establishmentsByLicense(d))
+    // This is soooooo awkward. Have to do a weird thunky thing here because
+    // useActionF always applys the args and then tries to apply that to state
+    // so if you just want to wholesale replace state you have to make it aware
+    // of the state argument that you just want to ignore anyways
   )
 }
 

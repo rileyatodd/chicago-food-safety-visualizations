@@ -65,7 +65,7 @@ function mapStateToProps(state) {
   return {
     locations: filteredEstablishments(state.filters, state.data),
     selectedLocation: state.data[state.selectedLocation],
-    viewType: state.viewType
+    viewType: state.ui.viewType
   }
 }
 
