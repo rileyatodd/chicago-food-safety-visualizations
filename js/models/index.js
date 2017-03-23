@@ -75,29 +75,39 @@ export const countResults = countBy(prop('results'))
 
 
 ////// STUFF FOR INTERACTING WITH data.cityofchicago.org's SODA endpoint
+const remoteDataUrl = 'https://data.cityofchicago.org/resource/cwig-ma7x.json'
 
-const validateBounds = bounds => bounds && !isEmpty(values(bounds)) 
+const validateBounds = bounds => bounds && !isEmpty(values(bounds))
                                         && all(identity, values(bounds))
 
 // {north, south, east, west} -> String
 const buildGeoQuery = (bounds) =>
-  `&$where=latitude > ${bounds.south} AND latitude < ${bounds.north} AND longitude > ${bounds.west} AND longitude < ${bounds.east}`
+  `&$where=latitude > ${bounds.south} AND latitude < ${bounds.north} `
+  + `AND longitude > ${bounds.west} AND longitude < ${bounds.east}`
 
-const remoteDataUrl = 'https://data.cityofchicago.org/resource/cwig-ma7x.json?$order=inspection_date DESC&$limit=1000'
+export const locationsQuery =
+  '?$select=license_,latitude,longitude,address,dba_name'
+  + '&$group=license_,latitude,longitude,address,dba_name'
 
-export const loadDataFromRemote = (bounds) => (dispatch, getState) => {
-  let query = validateBounds(bounds) ? buildGeoQuery(bounds.toJSON()) : ''
-  dispatch(setLoadingData(true))
-  getJSON(remoteDataUrl + query).fork(
+export const loadDataFromRemote = () => (dispatch, getState) => {
+  let bounds = getState().ui.gMap.getBounds()
+  let geoQuery = validateBounds(bounds) ? buildGeoQuery(bounds.toJSON()) : ''
+  dispatch(actionify('UI', 'setLoadingLocations', set_('loadingLocations', true)))
+  getJSON(remoteDataUrl + locationsQuery + geoQuery).fork(
     throwErr,
     compose(dispatch, setData)
   )
 }
 
-export const setLoadingData = actionify('UI', 'setLoading', set_('loading'))
+export const loadInspectionsForLicense = license => (dispatch, getState) => {
+  dispatch(actionify('UI', 'setLoadingInspections', set_('loadingInspections', true)))
+  getJSON(remoteDataUrl + `?$where=license_ = ${license}&$order=inspection_date DESC`)
+    .fork(
+      throwErr
+      , compose(dispatch, actionify('data', 'setInspections', set_([license, 'inspections'])))
+    )
+}
+
 export const setData = actionify('data', 'setData', compose(K, establishmentsByLicense))
-export const setPassFailFilter = actionify('UI', 'setPassFailFilter', set_(['filters', 'passFail']))
-export const selectLocation = actionify('UI', 'selectLocation', set_('selectedLocation'))
-export const setMarkerType = actionify('UI', 'changeMarkerType', set_('viewType'))
 
 ////////////////////////////////////////////////////////////////////////////

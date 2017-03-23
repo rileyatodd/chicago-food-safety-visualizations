@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import styles from 'styles/FoodMapFilters.css'
 
-export default function FoodMapFilters({handleUpdate, handlePassFailChange, handleViewTypeChange}) {
+export default function FoodMapFilters({updateQuery, handleUpdate, handlePassFailChange, handleViewTypeChange}) {
   return (
     <div className={styles.container}>
       <div>
@@ -19,7 +19,11 @@ export default function FoodMapFilters({handleUpdate, handlePassFailChange, hand
           <option value="heatmap">Heatmap</option>
         </select>
       </div>
-      <button onClick={() => handleUpdate(window.gMap.getBounds())}>
+      <div>
+        <label style={{display: 'block'}}>Search Within Map</label>
+        <input type='text' onChange={updateQuery}/>
+      </div>
+      <button onClick={handleUpdate}>
         Search In Map
       </button>
     </div>
