@@ -21,7 +21,7 @@ export default function FoodMapFilters({updateQuery, handleUpdate, handlePassFai
       </div>
       <div>
         <label style={{display: 'block'}}>Search Within Map</label>
-        <input type='text' onChange={updateQuery}/>
+        <input type='text' onChange={e => updateQuery(e.target.value)}/>
       </div>
       <button onClick={handleUpdate}>
         Search In Map

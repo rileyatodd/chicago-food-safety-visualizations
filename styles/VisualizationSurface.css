@@ -35,4 +35,19 @@
   border: none;
   padding: 7px 12px;
   font-size: 18px;
+  cursor: pointer;
+}
+
+.warning {
+  background: #fff084;
+  padding: 5px;
+  margin: 10px 0;
+}
+
+.warning > p {
+  margin: 0 0 10px 0;
+}
+
+.warning > p:last-child {
+  margin: 0;
 }

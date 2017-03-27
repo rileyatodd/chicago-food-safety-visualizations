@@ -21,11 +21,25 @@ class VisualizationSurface extends Component {
 
     return (
       <div className={styles.root}>
-        <h3># of Unique Establishments: {keys(establishments).length}</h3>
         <FoodMapFilters handleUpdate={handleUpdate}
                         handlePassFailChange={handlePassFailChange}
                         handleViewTypeChange={handleViewTypeChange}
                         updateQuery={updateQuery}/>
+
+      {keys(establishments).length > 950 &&
+        <div className={styles.warning}>
+          <p>
+            Your last search returned quite a few establishments!
+            There may be a few establishments missing from your results due
+            to the constraints of the city of Chicago's open data system.
+          </p>
+          <p>
+            If the establishment you are looking for can't be found,
+            try zooming the map in a bit so that less establishments are
+            inside the bounds of the map.
+          </p>
+        </div>}
+        
         <FoodSafetyMap />
         <LocationInfo location={selectedLocation} />
       </div>

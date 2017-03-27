@@ -1,28 +1,19 @@
 import { allPass, values, filter, groupBy
        , head, lensPath, flip, view
-       , toPairs, T, compose, map
-       , prop, any, none, equals
+       , toPairs, T, compose, map, sum
+       , prop, any, none, equals, lt
        , replace, split, identity, propEq
        , find, countBy, isEmpty, all, always as K
        } from 'ramda'
 import { getJSON, throwErr, safeFind, set_, trace } from 'util'
 import { actionify } from 'util/redux'
 
-// [Establishment] -> [Result]
-const allResults = compose(map(prop('results')), prop('inspections'))
-
-// [Establishment] -> Bool
-const hasNotFailed = compose(none(equals('Fail')), allResults)
-
-// [Establishment] -> Bool
-const hasFailed = compose(any(equals('Fail')), allResults)
-
 // Organizes possible filters into a queryable hierarchy
 let filters = {
   passFail: {
     all : T,
-    pass: hasNotFailed,
-    fail: hasFailed
+    pass: propEq('failCount', 0),
+    fail: compose(lt(0), prop('failCount'))
   }
 }
 
@@ -48,6 +39,7 @@ const buildPosition = (x) => ({ lat: parseFloat(x.latitude)
 const inspectionsToEstablishment = (inspections) => ({
   position: buildPosition(head(inspections)),
   license: head(inspections)['license_'],
+  failCount: sum(map(compose(parseInt, prop('failCount')), inspections)),
   inspections
 })
 
@@ -73,7 +65,7 @@ export const lastFailureDate = compose( map(prop('inspection_date'))
 // [Inspection] -> {Pass: Integer, Fail: Integer, Pass w/ Exceptions: Integer}
 export const countResults = countBy(prop('results'))
 
-
+////////////////////////////////////////////////////////////////////////
 ////// STUFF FOR INTERACTING WITH data.cityofchicago.org's SODA endpoint
 const remoteDataUrl = 'https://data.cityofchicago.org/resource/cwig-ma7x.json'
 
@@ -85,12 +77,13 @@ const buildGeoQuery = (bounds) =>
   `&$where=latitude > ${bounds.south} AND latitude < ${bounds.north} `
   + `AND longitude > ${bounds.west} AND longitude < ${bounds.east}`
 
-export const locationsQuery =
+const locationsQuery =
   '?$select=license_,latitude,longitude,address,dba_name'
+  + ',sum(case(results = "Fail", 1, true, 0)) as failCount'
   + '&$group=license_,latitude,longitude,address,dba_name'
 
 export const loadDataFromRemote = () => (dispatch, getState) => {
-  let bounds = getState().ui.gMap.getBounds()
+  let bounds = getState().ui.map.getBounds()
   let geoQuery = validateBounds(bounds) ? buildGeoQuery(bounds.toJSON()) : ''
   dispatch(actionify('UI', 'setLoadingLocations', set_('loadingLocations', true)))
   getJSON(remoteDataUrl + locationsQuery + geoQuery).fork(
