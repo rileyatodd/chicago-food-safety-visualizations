@@ -21,7 +21,9 @@ module.exports =
   }
 , resolve:
   { alias:
-    { models: path.resolve(__dirname, 'js/models')
+    { react: 'preact-compat'
+    , 'react-dom': 'preact-compat'
+    , models: path.resolve(__dirname, 'js/models')
     , components: path.resolve(__dirname, 'js/components')
     , containers: path.resolve(__dirname, 'js/containers')
     , store: path.resolve(__dirname, 'js/store')
