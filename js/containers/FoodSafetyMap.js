@@ -36,7 +36,13 @@ class FoodSafetyMap extends Component {
         , selectedLocation
         , setMap
         , map
+        , results
+        , query
         } = this.props
+
+    let filteredLocations = query 
+      ? locations.filter(x => results.has(x.license))
+      : locations
 
     return (
       <GoogleMapLoader
@@ -46,7 +52,7 @@ class FoodSafetyMap extends Component {
                      defaultZoom={15}
                      defaultCenter={{lat: 41.879272, lng: -87.639737}}>
             {viewType == 'marker' &&
-              locations.map(renderMarker(handleMarkerClicked))}
+              filteredLocations.map(renderMarker(handleMarkerClicked))}
           </GoogleMap>
         }
       />
@@ -63,6 +69,8 @@ FoodSafetyMap.propTypes =
 
 let mapStateToProps = state => (
   { locations: filteredEstablishments(state.ui.filters, state.data)
+  , results: state.search.results
+  , query: state.ui.query
   , selectedLocation: state.data[state.ui.selectedLocation]
   , viewType: state.ui.viewType
   , map: state.ui.map

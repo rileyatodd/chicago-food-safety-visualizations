@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { format } from 'date-fns/format'
+import format from 'date-fns/format'
 import { lastFailureDate, countResults } from 'models'
 import Violations from 'components/Violations'
 import styles from 'styles/LocationInfo.css'
@@ -44,12 +44,12 @@ const LocationInfo = ({ location }) => {
       <div>
         <h4>Inspections</h4>
         <ol className={styles.inspectionList}>
-          {inspections.map(inspection => (
-            <li key={inspection.inspection_id}>
-              <div className={styles.date}>{format(inspection.inspection_date, 'MMM D YYYY')}</div>
-              <div className={styles.result}>{inspection.results}</div>
+          {inspections.map(({inspection_id, inspection_date, results, violations}) => (
+            <li key={inspection_id}>
+              <div className={styles.date}>{format(inspection_date, 'MMM D YYYY')}</div>
+              <div className={styles.result}>{results}</div>
               <div>
-                <Violations violationsStr={inspection.violations || ""} />
+                <Violations violationsStr={violations || ""} />
               </div>
             </li>
           ))}

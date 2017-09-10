@@ -10,6 +10,10 @@ render(
   document.getElementById('root')
 )
 
+if (module.hot) {
+  require('preact/devtools')
+}
+
 export { 
   store
 }
