@@ -32,8 +32,7 @@ export const filteredEstablishments =
 
 // Inspection -> LatLngLiteral
 const buildPosition = (x) => ({ lat: parseFloat(x.latitude)
-                              , lng: parseFloat(x.longitude)
-                              })
+                              , lng: parseFloat(x.longitude) })
 
 // [Inspection] -> Establishment
 const inspectionsToEstablishment = (inspections) => ({
@@ -59,8 +58,7 @@ export const parseViolations = compose(
 
 // [Inspection] -> Maybe String
 export const lastFailureDate = compose( map(prop('inspection_date'))
-                                      , safeFind(propEq('results', 'Fail'))
-                                      )
+                                      , safeFind(propEq('results', 'Fail')) )
 
 // [Inspection] -> {Pass: Integer, Fail: Integer, Pass w/ Exceptions: Integer}
 export const countResults = countBy(prop('results'))

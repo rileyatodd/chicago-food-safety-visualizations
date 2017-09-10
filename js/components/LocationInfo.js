@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { formatDate } from 'util'
+import { format } from 'date-fns/format'
 import { lastFailureDate, countResults } from 'models'
 import Violations from 'components/Violations'
 import styles from 'styles/LocationInfo.css'
@@ -26,8 +26,9 @@ const LocationInfo = ({ location }) => {
           <div>
             <dt>Last Failure</dt>
             <dd>
-              {lastFailureDate(inspections).map(formatDate('MMM D YYYY'))
-                                           .getOrElse('None')}
+              {lastFailureDate(inspections)
+                .map(x => format(x, 'MMM D YYYY'))
+                .getOrElse('None')}
             </dd>
           </div>
           <div>
@@ -45,7 +46,7 @@ const LocationInfo = ({ location }) => {
         <ol className={styles.inspectionList}>
           {inspections.map(inspection => (
             <li key={inspection.inspection_id}>
-              <div className={styles.date}>{formatDate('MMM D YYYY', inspection.inspection_date)}</div>
+              <div className={styles.date}>{format(inspection.inspection_date, 'MMM D YYYY')}</div>
               <div className={styles.result}>{inspection.results}</div>
               <div>
                 <Violations violationsStr={inspection.violations || ""} />

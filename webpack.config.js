@@ -1,24 +1,24 @@
 var path = require('path')
+var BundleAnalyzerPlugin  = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports =
 { entry: './js/index.js'
 , devtool: 'source-map'
+, plugins: 
+  [ new BundleAnalyzerPlugin()
+  , new UglifyJSPlugin({sourceMap: true}) ]
 , output:
   { path: path.join(__dirname, 'dist')
   , filename: 'bundle.js'
-  , publicPath: '/webpack'
-  }
+  , publicPath: '/webpack' }
 , module:
   { loaders:
     [ { test: /\.jsx?$/
       , loaders: ['react-hot-loader', 'babel-loader']
-      , include: path.join(__dirname, 'js')
-      }
+      , include: path.join(__dirname, 'js') }
     , { test: /\.css$/
-      , loader: 'style-loader!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]'
-      }
-    ]
-  }
+      , loader: 'style-loader!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]' } ] }
 , resolve:
   { alias:
     { react: 'preact-compat'
@@ -30,7 +30,4 @@ module.exports =
     , reducers: path.resolve(__dirname, 'js/reducers')
     , actions: path.resolve(__dirname, 'js/actions')
     , util: path.resolve(__dirname, 'js/util')
-    , styles: path.resolve(__dirname, 'styles')
-    }
-  }
-}
+    , styles: path.resolve(__dirname, 'styles') } } }

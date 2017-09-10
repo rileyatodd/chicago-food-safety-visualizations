@@ -2,7 +2,6 @@ import Task from 'data.task'
 import Maybe from 'data.maybe'
 import { find, chain, compose, curry, flip, lensProp, lensIndex, map } from 'ramda'
 import { set, over } from 'ramda-lens'
-import moment from 'moment'
 
 export var trace = curry((tag, x) => {console.log(tag, x);return x})
 
@@ -28,9 +27,6 @@ const getResponseJSON = (response) => taskFromPromise(response.json())
 
 // URL -> Task Error Object
 export var getJSON = compose(chain(getResponseJSON), request({method: 'GET'}))
-
-// MomentInput -> String
-export const formatDate = curry((format, date) => moment(date).format(format))
 
 // Pred -> [a] -> Maybe a
 export const safeFind = curry((pred, xs) => {
