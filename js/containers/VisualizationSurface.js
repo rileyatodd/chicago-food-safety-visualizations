@@ -40,7 +40,7 @@ class VisualizationSurface extends Component {
           </p>
         </div>}
         
-        {window.google && <FoodSafetyMap />}
+        <FoodSafetyMap />
         <LocationInfo location={selectedLocation} />
       </div>
     )
