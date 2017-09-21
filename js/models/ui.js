@@ -7,4 +7,4 @@ export const setPassFailFilter = actionify('UI', 'setPassFailFilter', set_(['fil
 export const selectLocation = actionify('UI', 'selectLocation', set_('selectedLocation'))
 export const setMarkerType = actionify('UI', 'changeMarkerType', set_('viewType'))
 export const updateQuery = actionify('UI', 'updateQuery', set_('query'))
-export const setMap = actionify('UI', 'setMap', set_('map'))
+export const setGMap = actionify('UI', 'setGMap', set_('gMap'))

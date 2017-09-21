@@ -81,7 +81,7 @@ const locationsQuery =
   + '&$group=license_,latitude,longitude,address,dba_name'
 
 export const loadDataFromRemote = () => (dispatch, getState) => {
-  let bounds = getState().ui.map.getBounds()
+  let bounds = getState().ui.gMap.getBounds()
   let geoQuery = validateBounds(bounds) ? buildGeoQuery(bounds.toJSON()) : ''
   dispatch(actionify('UI', 'setLoadingLocations', set_('loadingLocations', true)))
   getJSON(remoteDataUrl + locationsQuery + geoQuery).fork(

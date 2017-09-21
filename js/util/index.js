@@ -6,7 +6,8 @@ import { set, over } from 'ramda-lens'
 export var trace = curry((tag, x) => {console.log(tag, x);return x})
 
 // Promise a -> Task Error a
-export var taskFromPromise = promise => new Task((reject, result) => promise.then(result).catch(reject))
+export var taskFromPromise = promise => new Task(
+  (reject, result) => promise.then(result).catch(reject))
 
 // String -> Object -> Task Error Response
 const request = curry((params, url) => taskFromPromise(fetch(url, params)))
@@ -47,3 +48,13 @@ const overPath = curry((p, f, o) => over(compose(...map(lens, p)), f, o))
 export const set_ = curry((p, x, o) => (Array.isArray(p) ? setPath : setProp)(p, x, o))
 
 export const over_ = curry((p, f, o) => (Array.isArray(p) ? overPath : overProp)(p, f, o))
+
+export function loadScript(attributes) {
+  let existingScript = document.querySelector(`script[src='${attributes.src}']`)
+  if (existingScript) return
+
+  attributes.type = attributes.type || 'text/javascript'
+  var tag = document.createElement('script')
+  Object.assign(tag, attributes)
+  document.body.append(tag)
+}

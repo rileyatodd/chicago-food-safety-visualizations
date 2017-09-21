@@ -22,6 +22,7 @@
     "ramda-lens": "^0.1.1",
     "react-google-maps": "^7.3.0",
     "react-redux": "^5.0.3",
+    "recompose": "^0.25.0",
     "redux": "^3.6.0",
     "redux-thunk": "^2.2.0"
   },

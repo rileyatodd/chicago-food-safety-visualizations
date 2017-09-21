@@ -1,12 +1,12 @@
 /* global google */
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { GoogleMapLoader, GoogleMap, Marker } from "react-google-maps"
+import GMap from 'components/GMap'
+import { Marker } from 'react-google-maps'
 import { curry, map, compose } from 'expose-loader?r!ramda'
 import { loadInspectionsForLicense, filteredEstablishments } from 'models'
-import { selectLocation, setMap } from 'models/ui'
-import { actionify } from 'util/redux'
-import { set_ } from 'util'
+import { selectLocation, setGMap } from 'models/ui'
+import WaitForScript from 'util/WaitForScript'
 
 const renderMarker = curry((handleClick, location) =>
   <Marker {...location}
@@ -16,7 +16,7 @@ const renderMarker = curry((handleClick, location) =>
 class FoodSafetyMap extends Component {
 
   componentDidUpdate() {
-    let {locations, viewType, gMap, heatmapLayer, setHeatmapLayer} = this.props
+    let {locations, viewType, heatmapLayer, setHeatmapLayer} = this.props
 
     if (!this.heatMap) {
       this.heatMap = new google.maps.visualization.HeatmapLayer({
@@ -34,8 +34,8 @@ class FoodSafetyMap extends Component {
         , handleMarkerClicked
         , viewType
         , selectedLocation
-        , setMap
-        , map
+        , setGMap
+        , gMap
         , results
         , query
         } = this.props
@@ -45,27 +45,26 @@ class FoodSafetyMap extends Component {
       : locations
 
     return (
-      <GoogleMapLoader
-        containerElement={<div style={{height: "400px"}} />}
-        googleMapElement={
-          <GoogleMap ref={c => c && !map && setMap(c.props.map)}
-                     defaultZoom={15}
-                     defaultCenter={{lat: 41.879272, lng: -87.639737}}>
-            {viewType == 'marker' &&
-              filteredLocations.map(renderMarker(handleMarkerClicked))}
-          </GoogleMap>
-        }
-      />
+      <WaitForScript src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu9YoSsRP2XYViyxIcPaMgwg2Engc2Nh4&libraries=geometry,visualization">
+        {({ loaded }) => (
+          loaded
+          ? <GMap refFn={c => !gMap && setGMap(c)} 
+                  childs={
+                    viewType == 'marker' 
+                    && filteredLocations.map(renderMarker(handleMarkerClicked))
+                  } />
+          : <div>spinner</div>
+        )}
+      </WaitForScript>
     )
   }
 }
 
 FoodSafetyMap.propTypes =
   { handleMarkerClicked: PropTypes.func.isRequired
-  , setMap: PropTypes.func.isRequired
+  , setGMap: PropTypes.func.isRequired
   , locations: PropTypes.array
-  , viewType: PropTypes.string.isRequired
-  }
+  , viewType: PropTypes.string.isRequired }
 
 let mapStateToProps = state => (
   { locations: filteredEstablishments(state.ui.filters, state.data)
@@ -73,14 +72,11 @@ let mapStateToProps = state => (
   , query: state.ui.query
   , selectedLocation: state.data[state.ui.selectedLocation]
   , viewType: state.ui.viewType
-  , map: state.ui.map
-  })
+  , gMap: state.ui.gMap })
 
 let mapDispatchToProps = dispatch => (
   { handleMarkerClicked: license => { dispatch(selectLocation(license))
-                                    ; dispatch(loadInspectionsForLicense(license))
-                                    }
-  , setMap: compose(dispatch, setMap)
-  })
+                                    ; dispatch(loadInspectionsForLicense(license)) }
+  , setGMap: compose(dispatch, setGMap) })
 
 export default connect(mapStateToProps, mapDispatchToProps)(FoodSafetyMap)
