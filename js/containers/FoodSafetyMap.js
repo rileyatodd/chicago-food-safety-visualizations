@@ -48,7 +48,10 @@ class FoodSafetyMap extends Component {
       <WaitForScript src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu9YoSsRP2XYViyxIcPaMgwg2Engc2Nh4&libraries=geometry,visualization">
         {({ loaded }) => (
           loaded
-          ? <GMap refFn={c => !gMap && setGMap(c)} 
+          ? <GMap refFn={c => {
+                    !gMap && setGMap(c)
+                    window.gMap = c.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+                  }}
                   childs={
                     viewType == 'marker' 
                     && filteredLocations.map(renderMarker(handleMarkerClicked))
