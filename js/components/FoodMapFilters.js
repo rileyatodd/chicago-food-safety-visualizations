@@ -1,7 +1,14 @@
 import React, { PropTypes } from 'react'
+import Spinner from 'components/Spinner'
 import styles from 'styles/FoodMapFilters.css'
 
-export default function FoodMapFilters({updateQuery, handleUpdate, handlePassFailChange, handleViewTypeChange}) {
+export default function FoodMapFilters({
+  updateQuery, 
+  handleUpdate, 
+  handlePassFailChange, 
+  handleViewTypeChange,
+  isLoading
+}) {
   return (
     <div className={styles.container}>
       <div>
@@ -26,6 +33,7 @@ export default function FoodMapFilters({updateQuery, handleUpdate, handlePassFai
       <button onClick={handleUpdate}>
         Search In Map
       </button>
+      {isLoading && <Spinner />}
     </div>
   )
 }
@@ -33,7 +41,9 @@ export default function FoodMapFilters({updateQuery, handleUpdate, handlePassFai
 FoodMapFilters.displayName = 'FoodMapFilters'
 
 FoodMapFilters.propTypes = {
+  updateQuery: PropTypes.func.isRequired,
   handleUpdate: PropTypes.func.isRequired,
   handlePassFailChange: PropTypes.func.isRequired,
-  handleViewTypeChange: PropTypes.func.isRequired
+  handleViewTypeChange: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool
 }

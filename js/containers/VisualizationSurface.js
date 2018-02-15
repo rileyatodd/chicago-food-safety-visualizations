@@ -17,6 +17,8 @@ class VisualizationSurface extends Component {
         , handleViewTypeChange
         , selectedLocation
         , updateQuery
+        , loadingInspections
+        , loadingLocations
         } = this.props
 
     return (
@@ -24,7 +26,9 @@ class VisualizationSurface extends Component {
         <FoodMapFilters handleUpdate={handleUpdate}
                         handlePassFailChange={handlePassFailChange}
                         handleViewTypeChange={handleViewTypeChange}
-                        updateQuery={updateQuery}/>
+                        updateQuery={updateQuery}
+                        isLoading={loadingLocations}
+                        />
 
       {keys(establishments).length > 950 &&
         <div className={styles.warning}>
@@ -39,9 +43,8 @@ class VisualizationSurface extends Component {
             inside the bounds of the map.
           </p>
         </div>}
-        
         <FoodSafetyMap />
-        <LocationInfo location={selectedLocation} />
+        <LocationInfo location={selectedLocation} isLoading={loadingInspections}/>
       </div>
     )
   }
@@ -58,10 +61,12 @@ VisualizationSurface.propTypes = {
 const mapStateToProps = (state) => ({
   establishments: state.data,
   selectedLocation: state.data[state.ui.selectedLocation],
+  loadingInspections: state.ui.loadingInspections,
+  loadingLocations: state.ui.loadingLocations
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  handleUpdate: compose(dispatch, loadDataFromRemote),
+  handleUpdate: compose(dispatch, () => loadDataFromRemote(window.gMap.getBounds())),
   handlePassFailChange: compose(dispatch, setPassFailFilter, prop('value'), prop('target')),
   handleViewTypeChange: compose(dispatch, setMarkerType, prop('value'), prop('target')),
   updateQuery: compose(dispatch, updateQuery)

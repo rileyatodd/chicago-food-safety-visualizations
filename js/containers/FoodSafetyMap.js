@@ -7,6 +7,7 @@ import { curry, map, compose } from 'expose-loader?r!ramda'
 import { loadInspectionsForLicense, filteredEstablishments } from 'models'
 import { selectLocation, setGMap } from 'models/ui'
 import WaitForScript from 'util/WaitForScript'
+import Spinner from 'components/Spinner'
 
 const renderMarker = curry((handleClick, location) =>
   <Marker {...location}
@@ -34,8 +35,6 @@ class FoodSafetyMap extends Component {
         , handleMarkerClicked
         , viewType
         , selectedLocation
-        , setGMap
-        , gMap
         , results
         , query
         } = this.props
@@ -49,14 +48,13 @@ class FoodSafetyMap extends Component {
         {({ loaded }) => (
           loaded
           ? <GMap refFn={c => {
-                    !gMap && setGMap(c)
                     window.gMap = c.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
                   }}
                   childs={
                     viewType == 'marker' 
                     && filteredLocations.map(renderMarker(handleMarkerClicked))
                   } />
-          : <div>spinner</div>
+          : <Spinner />
         )}
       </WaitForScript>
     )
@@ -65,7 +63,6 @@ class FoodSafetyMap extends Component {
 
 FoodSafetyMap.propTypes =
   { handleMarkerClicked: PropTypes.func.isRequired
-  , setGMap: PropTypes.func.isRequired
   , locations: PropTypes.array
   , viewType: PropTypes.string.isRequired }
 
@@ -74,12 +71,10 @@ let mapStateToProps = state => (
   , results: state.search.results
   , query: state.ui.query
   , selectedLocation: state.data[state.ui.selectedLocation]
-  , viewType: state.ui.viewType
-  , gMap: state.ui.gMap })
+  , viewType: state.ui.viewType })
 
 let mapDispatchToProps = dispatch => (
   { handleMarkerClicked: license => { dispatch(selectLocation(license))
-                                    ; dispatch(loadInspectionsForLicense(license)) }
-  , setGMap: compose(dispatch, setGMap) })
+                                    ; dispatch(loadInspectionsForLicense(license)) } })
 
 export default connect(mapStateToProps, mapDispatchToProps)(FoodSafetyMap)

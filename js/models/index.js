@@ -43,7 +43,8 @@ const inspectionsToEstablishment = (inspections) => ({
 })
 
 // [Inspection] -> {license: Establishment}
-export const establishmentsByLicense = compose(map(inspectionsToEstablishment), groupBy(prop('license_')))
+export const establishmentsByLicense = compose( map(inspectionsToEstablishment)
+                                              , groupBy(prop('license_')))
 
 // String -> [{title: String, comments: String}]
 export const parseViolations = compose(
@@ -80,25 +81,31 @@ const locationsQuery =
   + ',sum(case(results = "Fail", 1, true, 0)) as failCount'
   + '&$group=license_,latitude,longitude,address,dba_name'
 
-export const loadDataFromRemote = () => (dispatch, getState) => {
-  let bounds = getState().ui.gMap.getBounds()
+export const loadDataFromRemote = (bounds) => (dispatch, getState) => {
   let geoQuery = validateBounds(bounds) ? buildGeoQuery(bounds.toJSON()) : ''
-  dispatch(actionify('UI', 'setLoadingLocations', set_('loadingLocations', true)))
+  dispatch(setLoadingLocations(true))
   getJSON(remoteDataUrl + locationsQuery + geoQuery).fork(
     throwErr,
-    compose(dispatch, setData)
+    data => {
+      dispatch(setData(data))
+      dispatch(setLoadingLocations(false))
+    }
   )
 }
 
 export const loadInspectionsForLicense = license => (dispatch, getState) => {
-  dispatch(actionify('UI', 'setLoadingInspections', set_('loadingInspections', true)))
+  dispatch(setLoadingInspections(true))
   getJSON(remoteDataUrl + `?$where=license_ = ${license}&$order=inspection_date DESC`)
     .fork(
-      throwErr
-      , compose(dispatch, actionify('data', 'setInspections', set_([license, 'inspections'])))
+      throwErr, 
+      inspections => {
+        dispatch(actionify('data', 'setInspections', set_([license, 'inspections']))(inspections))
+        dispatch(setLoadingInspections(false))
+      }
     )
 }
 
 export const setData = actionify('data', 'setData', compose(K, establishmentsByLicense))
-
+export const setLoadingInspections = actionify('UI', 'setLoadingInspections', set_('loadingInspections'))
+export const setLoadingLocations = actionify('UI', 'setLoadingLocations', set_('loadingLocations'))
 ////////////////////////////////////////////////////////////////////////////

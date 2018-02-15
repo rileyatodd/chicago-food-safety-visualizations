@@ -2,10 +2,14 @@ import React, { PropTypes } from 'react'
 import format from 'date-fns/format'
 import { lastFailureDate, countResults } from 'models'
 import Violations from 'components/Violations'
+import Spinner from 'components/Spinner'
 import styles from 'styles/LocationInfo.css'
 
-const LocationInfo = ({ location }) => {
+
+const LocationInfo = ({ location, isLoading }) => {
   if (!location) return <div style={{height: '20px'}}></div>
+
+  if (isLoading) return <Spinner />
 
   let { inspections } = location
   let { address, dba_name, facility_type } = inspections[0]
