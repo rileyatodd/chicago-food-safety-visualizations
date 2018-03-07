@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { prop, compose, keys } from 'ramda'
 import FoodSafetyMap from './FoodSafetyMap'
 import FoodMapFilters from '../components/FoodMapFilters'
-import LocationInfo from 'components/LocationInfo'
 import styles from 'styles/VisualizationSurface.css'
 import { loadDataFromRemote } from 'models'
 import { updateQuery, setMarkerType, setPassFailFilter } from 'models/ui'
@@ -15,9 +14,7 @@ class VisualizationSurface extends Component {
         , handleUpdate
         , handlePassFailChange
         , handleViewTypeChange
-        , selectedLocation
         , updateQuery
-        , loadingInspections
         , loadingLocations
         } = this.props
 
@@ -44,7 +41,6 @@ class VisualizationSurface extends Component {
           </p>
         </div>}
         <FoodSafetyMap />
-        <LocationInfo location={selectedLocation} isLoading={loadingInspections}/>
       </div>
     )
   }
@@ -54,14 +50,11 @@ VisualizationSurface.propTypes = {
   establishments: PropTypes.object,
   handleUpdate: PropTypes.func.isRequired,
   handlePassFailChange: PropTypes.func.isRequired,
-  handleViewTypeChange: PropTypes.func.isRequired,
-  selectedLocation: PropTypes.object
+  handleViewTypeChange: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
   establishments: state.data,
-  selectedLocation: state.data[state.ui.selectedLocation],
-  loadingInspections: state.ui.loadingInspections,
   loadingLocations: state.ui.loadingLocations
 })
 

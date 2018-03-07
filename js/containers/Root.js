@@ -1,17 +1,43 @@
 import React, { Component, PropTypes } from 'react'
-import { Provider } from 'react-redux'
-import VisualizationSurface from './VisualizationSurface'
+import { connect } from 'react-redux'
+import VisualizationSurface from 'containers/VisualizationSurface'
+import PickOne from 'components/PickOne'
+import About from 'components/About'
+import LocationInfo from 'components/LocationInfo'
 
-export default function Root({ store }) {
+function Root({ selectedLocation, loadingInspections }) {
   return (
-    <Provider store={store}>
+    <div>
       <VisualizationSurface />
-    </Provider>
+      <PickOne defaultSelected='about'>
+        {({ selected, select }) =>
+          <div>
+            <div>
+              <span onClick={() => select('about')}>About</span>
+              <span onClick={() => select('location')}>Location</span>
+            </div>
+            <div>
+            {
+              selected === 'about' ? 
+                <About id='about' /> :
+              selected === 'location' ?
+                <LocationInfo location={selectedLocation} 
+                              isLoading={loadingInspections} />                          
+              : null
+            }
+            </div>      
+          </div>
+        }
+      </PickOne>
+    </div>
   )
 }
 
 Root.displayName = 'Root'
 
-Root.propTypes = {
-  store: PropTypes.object.isRequired
-}
+const mapStateToProps = (state) => ({
+  selectedLocation: state.data[state.ui.selectedLocation],
+  loadingInspections: state.ui.loadingInspections
+})
+
+export default connect(mapStateToProps)(Root)
