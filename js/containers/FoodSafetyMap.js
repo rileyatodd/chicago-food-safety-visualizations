@@ -9,10 +9,17 @@ import { selectLocation, setGMap } from 'models/ui'
 import WaitForScript from 'util/WaitForScript'
 import Spinner from 'components/Spinner'
 
-const renderMarker = curry((handleClick, location) =>
+const blueMarkerUrl = 'http://www.rileyatodd.com/images/map-marker.png'
+
+const renderMarker = (handleClick, selected, location) =>
   <Marker {...location}
           key={location.license}
-          onClick={() => handleClick(location.license)} />)
+          onClick={() => handleClick(location.license)} 
+          zIndex={selected ? 100 : 20}
+          icon={
+            selected ? { url: blueMarkerUrl } : null
+          }
+          />
 
 class FoodSafetyMap extends Component {
 
@@ -52,7 +59,13 @@ class FoodSafetyMap extends Component {
                   }}
                   childs={
                     viewType == 'marker' 
-                    && filteredLocations.map(renderMarker(handleMarkerClicked))
+                    && filteredLocations.map(
+                      location => renderMarker(
+                        handleMarkerClicked, 
+                        selectedLocation === location,
+                        location
+                      )
+                    )
                   } />
           : <Spinner />
         )}
@@ -75,6 +88,6 @@ let mapStateToProps = state => (
 
 let mapDispatchToProps = dispatch => (
   { handleMarkerClicked: license => { dispatch(selectLocation(license))
-                                    ; dispatch(loadInspectionsForLicense(license)) } })
+                                      dispatch(loadInspectionsForLicense(license)) } })
 
 export default connect(mapStateToProps, mapDispatchToProps)(FoodSafetyMap)

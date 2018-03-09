@@ -1,5 +1,7 @@
 # Chicago Food Safety Data Visualizations
 
 ## todo
-- Add loading indicator to food map
-- Indicate which marker is selected
+- List all locations in a tab
+  - allow selection
+  - filter by search bar
+- Select Location Tab when marker is clicked

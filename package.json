@@ -9,6 +9,7 @@
     "deploy": "gsutil cp dist/bundle.js gs://www.rileyatodd.com/javascripts/food-safety-bundle.js"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "data.either": "^1.5.0",
     "data.maybe": "^1.2.2",
     "data.task": "^3.1.0",
