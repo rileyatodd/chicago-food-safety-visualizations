@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  flex: 1 0 0;
+}
+
+.tab {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.selected {
+  box-shadow: 0 -2px 2px #777;
+}
