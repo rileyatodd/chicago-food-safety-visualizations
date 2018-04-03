@@ -5,8 +5,10 @@ import { allPass, values, filter, groupBy
        , replace, split, identity, propEq
        , find, countBy, isEmpty, all, always as K
        } from 'ramda'
-import { getJSON, throwErr, safeFind, set_, trace } from 'util'
-import { actionify } from 'util/redux'
+import { getJSON, throwErr, safeFind, set_, trace } from '../util'
+import { actionify } from '../util/redux'
+import { F, Atom } from '@grammarly/focal'
+import * as ui from './ui'
 
 // Organizes possible filters into a queryable hierarchy
 let filters = {
@@ -30,12 +32,31 @@ let activeFilters = compose(viewsIntoFilters, filterLenses)
 export const filteredEstablishments =
   (filterNames, data) => filter(allPass(activeFilters(filterNames)), values(data))
 
+interface LatLng {
+  lat: number
+  lng: number
+}
+
 // Inspection -> LatLngLiteral
-const buildPosition = (x) => ({ lat: parseFloat(x.latitude)
-                              , lng: parseFloat(x.longitude) })
+const buildPosition = (i: Inspection): LatLng => ({ lat: parseFloat(i.latitude)
+                                                  , lng: parseFloat(i.longitude) })
+
+export interface Inspection {
+  latitude: string
+  longitude: string
+  license: string
+  failCount: string
+}
+
+export interface Business {
+  position: LatLng
+  license: string
+  failCount: number
+  inspections: Inspection[]
+}
 
 // [Inspection] -> Establishment
-const inspectionsToEstablishment = (inspections) => ({
+const inspectionsToEstablishment = (inspections: Inspection[]): Business => ({
   position: buildPosition(head(inspections)),
   license: head(inspections)['license_'],
   failCount: sum(map(compose(parseInt, prop('failCount')), inspections)),
@@ -43,8 +64,9 @@ const inspectionsToEstablishment = (inspections) => ({
 })
 
 // [Inspection] -> {license: Establishment}
-export const establishmentsByLicense = compose( map(inspectionsToEstablishment)
-                                              , groupBy(prop('license_')))
+export const establishmentsByLicense: 
+(is: Inspection[]) => {[license: string]: Business} = compose( map(inspectionsToEstablishment)
+                                                             , groupBy(prop('license_')))
 
 // String -> [{title: String, comments: String}]
 export const parseViolations = compose(
@@ -93,6 +115,33 @@ export const loadDataFromRemote = (bounds) => (dispatch, getState) => {
   )
 }
 
+export const loadDataFromRemote2 = (atom: Atom<AppState>) => {
+  let bounds = window['gMap'].getBounds()
+  let geoQuery = validateBounds(bounds) ? buildGeoQuery(bounds.toJSON()) : ''
+  atom.lens(x => x.ui.loadingLocations).set(true)
+  getJSON(remoteDataUrl + locationsQuery + geoQuery).fork(
+    throwErr,
+    data => {
+      atom.lens(x => x.ui.loadingLocations).set(false)
+      atom.lens(x => x.data).set(establishmentsByLicense(data))
+    }
+  )
+}
+
+export interface AppState {
+  ui: ui.State
+  search: {
+    results: any
+  }
+  data: any
+}
+
+export const defaultState: AppState = {
+  ui: ui.defaultUIState,
+  data: null,
+  search: null
+}
+
 export const loadInspectionsForLicense = license => (dispatch, getState) => {
   dispatch(setLoadingInspections(true))
   getJSON(remoteDataUrl + `?$where=license_ = ${license}&$order=inspection_date DESC`)
@@ -101,6 +150,20 @@ export const loadInspectionsForLicense = license => (dispatch, getState) => {
       inspections => {
         dispatch(actionify('data', 'setInspections', set_([license, 'inspections']))(inspections))
         dispatch(setLoadingInspections(false))
+      }
+    )
+}
+
+export const loadInspectionsForLicense2 = (atom: Atom<AppState>, license) => {
+  let loadingInspections = atom.lens(s => s.ui.loadingInspections)
+  loadingInspections.set(true)
+  getJSON(remoteDataUrl + `?$where=license_ = ${license}&$order=inspection_date DESC`)
+    .fork(
+      throwErr, 
+      inspections => {
+        // dispatch(actionify('data', 'setInspections', set_([license, 'inspections']))(inspections))
+        atom.lens(x => x.data).modify(set_([license, 'inspections'], inspections))
+        loadingInspections.set(false)
       }
     )
 }

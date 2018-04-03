@@ -15,7 +15,7 @@ export function searchListeners(state = {}, action) {
 }
 
 
-const fuseOpts =
+export const fuseOpts =
   { threshold: 0.3
   , location: 0
   , distance: 50
