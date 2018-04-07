@@ -9,7 +9,7 @@ import * as tabStyles from 'styles/Tabs.css'
 import * as styles from 'styles/Root.css'
 import * as vsStyles from 'styles/VisualizationSurface.css'
 import * as cn from 'classnames'
-import { F, Atom } from '@grammarly/focal'
+import { F, Atom, lift } from '@grammarly/focal'
 import * as ui from '../models/ui'
 import { AppState } from '../models'
 
@@ -18,6 +18,8 @@ interface Props {
   loadingInspections: any
   atom: Atom<AppState>
 }
+
+let LiftedLocationInfo = lift(LocationInfo)
 
 function Root({ selectedLocation, loadingInspections, atom }: Props) {
   return (
@@ -65,8 +67,8 @@ function Root({ selectedLocation, loadingInspections, atom }: Props) {
               selected === 'about' ? 
                 <About /> :
               selected === 'location' ?
-                <LocationInfo location={selectedLocation} 
-                              isLoading={loadingInspections} />                          
+                <LiftedLocationInfo location={atom.map(s => s.data[s.ui.selectedLocation])} 
+                                    isLoading={atom.map(s => s.ui.loadingInspections)} />
               : null
             }
             </div>      

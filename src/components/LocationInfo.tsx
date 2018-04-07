@@ -1,8 +1,8 @@
 import * as React from 'react'
 let format = require('date-fns/format')
 import { lastFailureDate, countResults } from 'models'
-let Violations = require('components/Violations')
-let Spinner = require('components/Spinner')
+import Violations from '../components/Violations'
+import Spinner from '../components/Spinner'
 import * as styles from 'styles/LocationInfo.css'
 
 

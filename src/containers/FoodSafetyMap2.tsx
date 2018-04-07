@@ -5,12 +5,10 @@ import { fuseOpts } from '../models/search'
 import GMap from '../components/GMap'
 import { Marker } from 'react-google-maps'
 import { chain, prop, values, curry, map, compose } from 'ramda'
-import { loadInspectionsForLicense2, filteredEstablishments } from 'models'
-import { selectLocation, setGMap } from '../models/ui'
+import { loadInspectionsForLicense2, filteredEstablishments, AppState, gMapsScriptUrl } from 'models'
 import WaitForScript from '../util/WaitForScript'
 import Spinner from '../components/Spinner'
 import { Atom, lift } from '@grammarly/focal'
-import { AppState } from '../models'
 import { Observable } from 'rxjs'
 
 const blueMarkerUrl = 'http://www.rileyatodd.com/images/map-marker.png'
@@ -60,7 +58,7 @@ export default class FoodSafetyMap2 extends React.Component<Props, any> {
     let selectedLocation = state.lens(x => x.ui.selectedLocation)
 
     return (
-      <WaitForScript src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu9YoSsRP2XYViyxIcPaMgwg2Engc2Nh4&libraries=geometry,visualization">
+      <WaitForScript src={gMapsScriptUrl}>
         {({ loaded }) => (
           loaded
           ? <LiftedGMap 

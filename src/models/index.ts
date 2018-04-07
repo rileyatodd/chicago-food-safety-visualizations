@@ -10,6 +10,8 @@ import { actionify } from '../util/redux'
 import { F, Atom } from '@grammarly/focal'
 import * as ui from './ui'
 
+export const gMapsScriptUrl = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBu9YoSsRP2XYViyxIcPaMgwg2Engc2Nh4&libraries=geometry,visualization"
+
 // Organizes possible filters into a queryable hierarchy
 let filters = {
   passFail: {
