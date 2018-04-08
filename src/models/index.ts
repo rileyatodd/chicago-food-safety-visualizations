@@ -6,11 +6,38 @@ import { allPass, values, filter, groupBy
        , find, countBy, isEmpty, all, always as K
        } from 'ramda'
 import { getJSON, throwErr, safeFind, set_, trace } from '../util'
-import { actionify } from '../util/redux'
 import { F, Atom } from '@grammarly/focal'
 import * as ui from './ui'
 
 export const gMapsScriptUrl = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBu9YoSsRP2XYViyxIcPaMgwg2Engc2Nh4&libraries=geometry,visualization"
+
+export interface AppState {
+  ui: ui.State
+  search: {
+    results: any
+  }
+  data: {[license: string]: Business}
+}
+
+export const defaultState: AppState = {
+  ui: ui.defaultUIState,
+  data: null,
+  search: null
+}
+
+export interface Business {
+  position: LatLng
+  license: string
+  failCount: number
+  inspections: Inspection[]
+}
+
+export interface Inspection {
+  latitude: string
+  longitude: string
+  license: string
+  failCount: string
+}
 
 // Organizes possible filters into a queryable hierarchy
 let filters = {
@@ -31,7 +58,7 @@ let viewsIntoFilters = map(flip(view)(filters))
 let activeFilters = compose(viewsIntoFilters, filterLenses)
 
 // {filterType: filterName} -> {license: Establishment} -> [Establishment]
-export const filteredEstablishments =
+export const filterBusinesses =
   (filterNames, data) => filter(allPass(activeFilters(filterNames)), values(data))
 
 interface LatLng {
@@ -42,20 +69,6 @@ interface LatLng {
 // Inspection -> LatLngLiteral
 const buildPosition = (i: Inspection): LatLng => ({ lat: parseFloat(i.latitude)
                                                   , lng: parseFloat(i.longitude) })
-
-export interface Inspection {
-  latitude: string
-  longitude: string
-  license: string
-  failCount: string
-}
-
-export interface Business {
-  position: LatLng
-  license: string
-  failCount: number
-  inspections: Inspection[]
-}
 
 // [Inspection] -> Establishment
 const inspectionsToEstablishment = (inspections: Inspection[]): Business => ({
@@ -100,77 +113,34 @@ const buildGeoQuery = (bounds) =>
   `&$where=latitude > ${bounds.south} AND latitude < ${bounds.north} `
   + `AND longitude > ${bounds.west} AND longitude < ${bounds.east}`
 
-const locationsQuery =
+const businessesQuery =
   '?$select=license_,latitude,longitude,address,dba_name'
   + ',sum(case(results = "Fail", 1, true, 0)) as failCount'
   + '&$group=license_,latitude,longitude,address,dba_name'
 
-export const loadDataFromRemote = (bounds) => (dispatch, getState) => {
-  let geoQuery = validateBounds(bounds) ? buildGeoQuery(bounds.toJSON()) : ''
-  dispatch(setLoadingLocations(true))
-  getJSON(remoteDataUrl + locationsQuery + geoQuery).fork(
-    throwErr,
-    data => {
-      dispatch(setData(data))
-      dispatch(setLoadingLocations(false))
-    }
-  )
-}
-
-export const loadDataFromRemote2 = (atom: Atom<AppState>) => {
+export const loadDataFromRemote = (atom: Atom<AppState>) => {
   let bounds = window['gMap'].getBounds()
   let geoQuery = validateBounds(bounds) ? buildGeoQuery(bounds.toJSON()) : ''
-  atom.lens(x => x.ui.loadingLocations).set(true)
-  getJSON(remoteDataUrl + locationsQuery + geoQuery).fork(
+  atom.lens(x => x.ui.loadingBusinesses).set(true)
+  getJSON(remoteDataUrl + businessesQuery + geoQuery).fork(
     throwErr,
     data => {
-      atom.lens(x => x.ui.loadingLocations).set(false)
+      atom.lens(x => x.ui.loadingBusinesses).set(false)
       atom.lens(x => x.data).set(establishmentsByLicense(data))
     }
   )
 }
 
-export interface AppState {
-  ui: ui.State
-  search: {
-    results: any
-  }
-  data: any
-}
-
-export const defaultState: AppState = {
-  ui: ui.defaultUIState,
-  data: null,
-  search: null
-}
-
-export const loadInspectionsForLicense = license => (dispatch, getState) => {
-  dispatch(setLoadingInspections(true))
-  getJSON(remoteDataUrl + `?$where=license_ = ${license}&$order=inspection_date DESC`)
-    .fork(
-      throwErr, 
-      inspections => {
-        dispatch(actionify('data', 'setInspections', set_([license, 'inspections']))(inspections))
-        dispatch(setLoadingInspections(false))
-      }
-    )
-}
-
-export const loadInspectionsForLicense2 = (atom: Atom<AppState>, license) => {
+export const loadInspectionsForLicense = (atom: Atom<AppState>, license) => {
   let loadingInspections = atom.lens(s => s.ui.loadingInspections)
   loadingInspections.set(true)
   getJSON(remoteDataUrl + `?$where=license_ = ${license}&$order=inspection_date DESC`)
     .fork(
       throwErr, 
       inspections => {
-        // dispatch(actionify('data', 'setInspections', set_([license, 'inspections']))(inspections))
         atom.lens(x => x.data).modify(set_([license, 'inspections'], inspections))
         loadingInspections.set(false)
       }
     )
 }
-
-export const setData = actionify('data', 'setData', compose(K, establishmentsByLicense))
-export const setLoadingInspections = actionify('UI', 'setLoadingInspections', set_('loadingInspections'))
-export const setLoadingLocations = actionify('UI', 'setLoadingLocations', set_('loadingLocations'))
 ////////////////////////////////////////////////////////////////////////////

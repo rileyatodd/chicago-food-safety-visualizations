@@ -1,20 +1,6 @@
 import { set_ } from 'util'
 import Fuse from 'fuse.js'
 
-export function searchListeners(state = {}, action) {
-  switch (action.type) {
-    case 'data__setData':
-      return set_('index', new Fuse(action.args[0], fuseOpts), state)
-    case 'UI__updateQuery':
-      return set_( 'results'
-                 , new Set(state.index.search(action.args[0]))
-                 , state )
-    default:
-      return state
-  }
-}
-
-
 export const fuseOpts =
   { threshold: 0.3
   , location: 0

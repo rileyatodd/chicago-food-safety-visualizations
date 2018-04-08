@@ -29,12 +29,13 @@ module.exports =
           , namedExport: true } } ] } ] }
 , resolve:
   { alias:
-    { models: path.resolve(__dirname, 'src/models')
+    { src: path.resolve(__dirname, 'src')
+    , models: path.resolve(__dirname, 'src/models')
     , components: path.resolve(__dirname, 'src/components')
     , containers: path.resolve(__dirname, 'src/containers')
     , store: path.resolve(__dirname, 'src/store')
     , reducers: path.resolve(__dirname, 'src/reducers')
     , actions: path.resolve(__dirname, 'src/actions')
     , util: path.resolve(__dirname, 'src/util')
-    , styles: path.resolve(__dirname, 'styles') } 
+    , styles: path.resolve(__dirname, 'src/styles') } 
   , extensions: [".ts", ".tsx", ".js", ".jsx"] } }

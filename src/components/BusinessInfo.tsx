@@ -1,17 +1,16 @@
 import * as React from 'react'
 let format = require('date-fns/format')
 import { lastFailureDate, countResults } from 'models'
-import Violations from '../components/Violations'
-import Spinner from '../components/Spinner'
-import * as styles from 'styles/LocationInfo.css'
+import Violations from 'src/components/Violations'
+import Spinner from 'src/components/Spinner'
+import * as styles from 'src/styles/BusinessInfo.css'
 
-
-const LocationInfo = ({ location, isLoading }) => {
-  if (!location) return <div style={{height: '20px'}}></div>
+export default function BusinessInfo({ business, isLoading }) {
+  if (!business) return <div style={{height: '20px'}}></div>
 
   if (isLoading) return <Spinner />
 
-  let { inspections } = location
+  let { inspections } = business
   let { address, dba_name, facility_type } = inspections[0]
   let resultCounts = countResults(inspections)
   return (
@@ -62,5 +61,3 @@ const LocationInfo = ({ location, isLoading }) => {
     </div>
   )
 }
-
-export default LocationInfo

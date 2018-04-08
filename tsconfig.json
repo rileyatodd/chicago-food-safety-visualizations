@@ -18,7 +18,7 @@
       , "reducers": ["src/reducers"]
       , "actions": ["src/actions"]
       , "util": ["src/util"]
-      , "styles": ["styles"] }
+      , "styles": ["src/styles"] }
   },
   "include": [
     "./src/"

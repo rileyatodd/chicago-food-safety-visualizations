@@ -1,11 +1,10 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
 import * as Fuse from 'fuse.js'
-import { fuseOpts } from '../models/search'
+import { fuseOpts } from 'src/models/search'
 import GMap from '../components/GMap'
 import { Marker } from 'react-google-maps'
 import { chain, prop, values, curry, map, compose } from 'ramda'
-import { loadInspectionsForLicense2, filteredEstablishments, AppState, gMapsScriptUrl } from 'models'
+import { loadInspectionsForLicense, filterBusinesses, AppState, gMapsScriptUrl } from 'models'
 import WaitForScript from '../util/WaitForScript'
 import Spinner from '../components/Spinner'
 import { Atom, lift } from '@grammarly/focal'
@@ -13,9 +12,9 @@ import { Observable } from 'rxjs'
 
 const blueMarkerUrl = 'http://www.rileyatodd.com/images/map-marker.png'
 
-const renderMarker = (handleClick, selected, location) =>
-  <Marker {...location}
-          key={location.license}
+const renderMarker = (handleClick, selected, business) =>
+  <Marker position={business.position}
+          key={business.license}
           onClick={handleClick} 
           zIndex={selected ? 100 : 20}
           icon={
@@ -48,14 +47,14 @@ export default class FoodSafetyMap2 extends React.Component<Props, any> {
       .do(console.log)
 
 
-    let filteredLocations = results.combineLatest(state)
+    let filteredBusinesses = results.combineLatest(state)
       .map(([ results, { ui, data } ]) => {
-        let businesses = filteredEstablishments(ui.filters, data)
+        let businesses = filterBusinesses(ui.filters, data)
         return ui.query ? businesses.filter(x => results.has(x.license)) 
                         : businesses
       })
 
-    let selectedLocation = state.lens(x => x.ui.selectedLocation)
+    let selectedBusiness = state.lens(x => x.ui.selectedBusiness)
 
     return (
       <WaitForScript src={gMapsScriptUrl}>
@@ -63,17 +62,16 @@ export default class FoodSafetyMap2 extends React.Component<Props, any> {
           loaded
           ? <LiftedGMap 
               childs={
-                filteredLocations.combineLatest(state.map(x => x.ui))
-                  .map(([ locations, ui ]) => 
-                    locations.filter(() => ui.viewType === 'marker')
-                      .map(location => renderMarker(
-                        //TODO trigger load of all inspections for that license
+                filteredBusinesses.combineLatest(state.map(x => x.ui))
+                  .map(([ businesses, ui ]) => 
+                    businesses.filter(() => ui.viewType === 'marker')
+                      .map(bus => renderMarker(
                         () => {
-                          selectedLocation.set(location.license)
-                          loadInspectionsForLicense2(state, location.license)
+                          selectedBusiness.set(bus.license)
+                          loadInspectionsForLicense(state, bus.license)
                         },
-                        ui.selectedLocation === location.license,
-                        location
+                        ui.selectedBusiness === bus.license,
+                        bus
                       )))
               } />
           : <Spinner />

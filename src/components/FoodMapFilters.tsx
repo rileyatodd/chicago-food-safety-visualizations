@@ -1,9 +1,9 @@
 import * as React from 'react'
-import Spinner from './Spinner'
-import * as styles from 'styles/FoodMapFilters.css'
+import Spinner from 'src/components/Spinner'
+import * as styles from 'src/styles/FoodMapFilters.css'
 import { F, Atom } from '@grammarly/focal'
-import * as ui from '../models/ui'
-import { loadDataFromRemote2, AppState } from '../models'
+import * as ui from 'src/models/ui'
+import { loadDataFromRemote, AppState } from 'src/models'
 
 export default function FoodMapFilters({
   atom
@@ -29,12 +29,10 @@ export default function FoodMapFilters({
         <label style={{display: 'block'}}>Search Within Map</label>
         <input type='text' onChange={e => atom.lens(x => x.ui.query).set(e.target.value)}/>
       </div>
-      <button onClick={() => loadDataFromRemote2(atom)}>
+      <button onClick={() => loadDataFromRemote(atom)}>
         Search In Map
       </button>
       {atom.view(x => x.ui.loadingInspections && <Spinner />)}
     </F.div>
   )
 }
-
-FoodMapFilters['displayName'] = 'FoodMapFilters'

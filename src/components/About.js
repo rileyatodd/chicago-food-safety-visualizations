@@ -23,7 +23,7 @@ const About = () =>
       a marker on the map for each establishment. This view has the benefit of
       being able to click on the markers to see the results and violations of
       the inspections. The other way to view the data is via a heatmap, which
-      is more helpful in determing the relative density of locations. Combining
+      is more helpful in determing the relative density of businesses. Combining
       the heatmap view with the 'Have failed at least once' filter allows one
       to see areas where food inspection failures are more common.
     </p>

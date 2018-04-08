@@ -1,31 +1,30 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
-import PickOne from '../components/PickOne'
-import About from '../components/About'
-import LocationInfo from '../components/LocationInfo'
-import FoodMapFilters2 from '../components/FoodMapFilters2'
-import FoodSafetyMap2 from '../containers/FoodSafetyMap2'
-import * as tabStyles from 'styles/Tabs.css'
-import * as styles from 'styles/Root.css'
-import * as vsStyles from 'styles/VisualizationSurface.css'
+import PickOne from 'src/components/PickOne'
+import About from 'src/components/About'
+import BusinessInfo from 'src/components/BusinessInfo'
+import FoodMapFilters from 'src/components/FoodMapFilters'
+import FoodSafetyMap from 'src/containers/FoodSafetyMap'
+import * as tabStyles from 'src/styles/Tabs.css'
+import * as styles from 'src/styles/Root.css'
+import * as vsStyles from 'src/styles/VisualizationSurface.css'
 import * as cn from 'classnames'
 import { F, Atom, lift } from '@grammarly/focal'
-import * as ui from '../models/ui'
-import { AppState } from '../models'
+import * as ui from 'src/models/ui'
+import { Business, AppState } from 'models'
 
 interface Props {
-  selectedLocation: any
-  loadingInspections: any
+  selectedBusiness: Business
+  loadingInspections: boolean
   atom: Atom<AppState>
 }
 
-let LiftedLocationInfo = lift(LocationInfo)
+let BusinessInfo$ = lift(BusinessInfo)
 
-function Root({ selectedLocation, loadingInspections, atom }: Props) {
+export default function Root({ selectedBusiness, loadingInspections, atom }: Props) {
   return (
     <div>
       <F.div className={vsStyles.root}>
-        <FoodMapFilters2 atom={window['atom']} />
+        <FoodMapFilters atom={window['atom']} />
 
         {atom.view(s => 
           Object.keys(s.data || {}).length > 950 &&
@@ -41,7 +40,7 @@ function Root({ selectedLocation, loadingInspections, atom }: Props) {
                 inside the bounds of the map.
               </p>
             </div>)}
-        <FoodSafetyMap2 state={window['atom']} />
+        <FoodSafetyMap state={window['atom']} />
       </F.div>
       <PickOne defaultSelected='about'>
         {({ selected, select }) =>
@@ -56,19 +55,19 @@ function Root({ selectedLocation, loadingInspections, atom }: Props) {
               </span>
               <span className={cn(
                       tabStyles.tab, 
-                      {[tabStyles.selected]: selected === 'location'})
+                      {[tabStyles.selected]: selected === 'business'})
                     }
-                    onClick={() => select('location')}>
-                Location
+                    onClick={() => select('business')}>
+                Business
               </span>
             </div>
             <div>
             {
               selected === 'about' ? 
                 <About /> :
-              selected === 'location' ?
-                <LiftedLocationInfo location={atom.map(s => s.data[s.ui.selectedLocation])} 
-                                    isLoading={atom.map(s => s.ui.loadingInspections)} />
+              selected === 'business' ?
+                <BusinessInfo$ business={atom.map(s => s.data[s.ui.selectedBusiness])} 
+                               isLoading={atom.map(s => s.ui.loadingInspections)} />
               : null
             }
             </div>      
@@ -78,12 +77,3 @@ function Root({ selectedLocation, loadingInspections, atom }: Props) {
     </div>
   )
 }
-
-Root['displayName'] = 'Root'
-
-const mapStateToProps = (state) => ({
-  selectedLocation: state.data[state.ui.selectedLocation],
-  loadingInspections: state.ui.loadingInspections
-})
-
-export default connect(mapStateToProps)(Root)
