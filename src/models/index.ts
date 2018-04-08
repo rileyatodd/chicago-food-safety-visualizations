@@ -21,7 +21,7 @@ export interface AppState {
 
 export const defaultState: AppState = {
   ui: ui.defaultUIState,
-  businesses: null,
+  businesses: {},
   search: null
 }
 

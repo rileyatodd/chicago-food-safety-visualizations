@@ -5,6 +5,7 @@ export interface State {
   loadingBusinesses: boolean;
   query: string;
   selectedBusiness: string;
+  selectedTab: string;
 }
 
 export const defaultUIState: State = {
@@ -13,5 +14,6 @@ export const defaultUIState: State = {
   loadingInspections: false,
   loadingBusinesses: false, 
   query: null, 
-  selectedBusiness: null
+  selectedBusiness: null,
+  selectedTab: 'about'
 }

@@ -44,7 +44,6 @@ export default class FoodSafetyMap2 extends React.Component<Props, any> {
     let results = state.view(x => x.ui.query)
       .combineLatest(index)
       .map(([ query, index ]) => new Set(index.search(query || "")))
-      .do(console.log)
 
 
     let filteredBusinesses = results.combineLatest(state)

@@ -34,44 +34,40 @@ export default function Root({ atom }: Props) {
               </p>
               <p>
                 If the business you are looking for can't be found,
-                try zooming the map in a bit so that less businesses are
+                try zooming the map in a bit so that fewer businesses are
                 inside the bounds of the map.
               </p>
             </div>)}
         <FoodSafetyMap state={window['atom']} />
       </F.div>
-      <PickOne defaultSelected='about'>
-        {({ selected, select }) =>
-          <div className={styles.tabContainer}>
-            <div className={tabStyles.container}>
-              <span className={cn(
-                      tabStyles.tab, 
-                      {[tabStyles.selected]: selected === 'about'})
-                    } 
-                    onClick={() => select('about')}>
-                About
-              </span>
-              <span className={cn(
-                      tabStyles.tab, 
-                      {[tabStyles.selected]: selected === 'business'})
-                    }
-                    onClick={() => select('business')}>
-                Business
-              </span>
-            </div>
-            <div>
-            {
-              selected === 'about' ? 
-                <About /> :
-              selected === 'business' ?
-                <BusinessInfo$ business={atom.map(s => s.businesses[s.ui.selectedBusiness])} 
-                               isLoading={atom.map(s => s.ui.loadingInspections)} />
-              : null
-            }
-            </div>      
-          </div>
-        }
-      </PickOne>
+      <div className={styles.tabContainer}>
+        <div className={tabStyles.container}>
+          <F.span className={atom.view(s => cn(
+                    tabStyles.tab, 
+                    {[tabStyles.selected]: s.ui.selectedTab === 'about'})
+                  )} 
+                  onClick={() => atom.lens(s => s.ui.selectedTab).set('about')}>
+            About
+          </F.span>
+          <F.span className={atom.view(s => cn(
+                  tabStyles.tab, 
+                  {[tabStyles.selected]: s.ui.selectedTab === 'business'})
+                )}
+                onClick={() => atom.lens(s => s.ui.selectedTab).set('business')}>
+            Business
+          </F.span>
+        </div>
+        <F.div>
+        {atom.view(s =>
+          s.ui.selectedTab === 'about' ? 
+            <About /> :
+          s.ui.selectedTab === 'business' ?
+            <BusinessInfo$ business={atom.map(s => s.businesses[s.ui.selectedBusiness])} 
+                           isLoading={atom.map(s => s.ui.loadingInspections)} />
+          : null
+        )}
+        </F.div>      
+      </div>
     </div>
   )
 }
