@@ -27,7 +27,7 @@ export default function Root({ selectedBusiness, loadingInspections, atom }: Pro
         <FoodMapFilters atom={window['atom']} />
 
         {atom.view(s => 
-          Object.keys(s.data || {}).length > 950 &&
+          Object.keys(s.businesses || {}).length > 950 &&
             <div className={vsStyles.warning}>
               <p>
                 Your last search returned quite a few businesses!
@@ -66,7 +66,7 @@ export default function Root({ selectedBusiness, loadingInspections, atom }: Pro
               selected === 'about' ? 
                 <About /> :
               selected === 'business' ?
-                <BusinessInfo$ business={atom.map(s => s.data[s.ui.selectedBusiness])} 
+                <BusinessInfo$ business={atom.map(s => s.businesses[s.ui.selectedBusiness])} 
                                isLoading={atom.map(s => s.ui.loadingInspections)} />
               : null
             }

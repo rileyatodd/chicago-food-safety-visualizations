@@ -16,12 +16,12 @@ export interface AppState {
   search: {
     results: any
   }
-  data: {[license: string]: Business}
+  businesses: {[license: string]: Business}
 }
 
 export const defaultState: AppState = {
   ui: ui.defaultUIState,
-  data: null,
+  businesses: null,
   search: null
 }
 
@@ -126,7 +126,7 @@ export const loadDataFromRemote = (atom: Atom<AppState>) => {
     throwErr,
     data => {
       atom.lens(x => x.ui.loadingBusinesses).set(false)
-      atom.lens(x => x.data).set(establishmentsByLicense(data))
+      atom.lens(x => x.businesses).set(establishmentsByLicense(data))
     }
   )
 }
@@ -138,7 +138,7 @@ export const loadInspectionsForLicense = (atom: Atom<AppState>, license) => {
     .fork(
       throwErr, 
       inspections => {
-        atom.lens(x => x.data).modify(set_([license, 'inspections'], inspections))
+        atom.lens(x => x.businesses).modify(set_([license, 'inspections'], inspections))
         loadingInspections.set(false)
       }
     )

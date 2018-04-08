@@ -34,7 +34,7 @@ export default class FoodSafetyMap2 extends React.Component<Props, any> {
   render() {
     let { state } = this.props
 
-    let index: Observable<Fuse> = state.view(x => x.data).map(
+    let index: Observable<Fuse> = state.view(x => x.businesses).map(
       compose( data => new Fuse(data, fuseOpts)
              , chain(prop('inspections'))
              , values
@@ -48,10 +48,10 @@ export default class FoodSafetyMap2 extends React.Component<Props, any> {
 
 
     let filteredBusinesses = results.combineLatest(state)
-      .map(([ results, { ui, data } ]) => {
-        let businesses = filterBusinesses(ui.filters, data)
-        return ui.query ? businesses.filter(x => results.has(x.license)) 
-                        : businesses
+      .map(([ results, { ui, businesses } ]) => {
+        let filteredBizs = filterBusinesses(ui.filters, businesses)
+        return ui.query ? filteredBizs.filter(x => results.has(x.license)) 
+                        : filteredBizs
       })
 
     let selectedBusiness = state.lens(x => x.ui.selectedBusiness)
