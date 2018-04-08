@@ -4,7 +4,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const { TsConfigPathsPlugin, CheckerPlugin } = require('awesome-typescript-loader');
 
 module.exports =
-{ entry: './src/index.js'
+{ entry: './src/index.tsx'
 , devtool: 'source-map'
 , plugins: 
   [ new UglifyJSPlugin({sourceMap: true})

@@ -1,5 +1,5 @@
 /* global google */
-import React from 'react'
+import * as React from 'react'
 import { render } from 'react-dom'
 import Root from './containers/Root'
 import { Atom } from '@grammarly/focal'
@@ -15,7 +15,7 @@ render(
 )
 
 let heatMap
-atom.view(s => map(omit(['inspections']), filterBusinesses(s.ui.filters, s.data)))
+atom.view(s => map(omit(['inspections']), filterBusinesses(s.ui.filters, s.businesses)))
     .filter(data => data && window['google'])// TODO, would be nice to have an observable of the google script loading
     .map(map(bus => new window['google'].maps.LatLng(bus.position)))
     .subscribe(heatMapData => {

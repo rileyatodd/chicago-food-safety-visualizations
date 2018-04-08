@@ -13,18 +13,16 @@ import * as ui from 'src/models/ui'
 import { Business, AppState } from 'models'
 
 interface Props {
-  selectedBusiness: Business
-  loadingInspections: boolean
   atom: Atom<AppState>
 }
 
 let BusinessInfo$ = lift(BusinessInfo)
 
-export default function Root({ selectedBusiness, loadingInspections, atom }: Props) {
+export default function Root({ atom }: Props) {
   return (
     <div>
       <F.div className={vsStyles.root}>
-        <FoodMapFilters atom={window['atom']} />
+        <FoodMapFilters atom={atom.lens(s => s.ui)} />
 
         {atom.view(s => 
           Object.keys(s.businesses || {}).length > 950 &&
