@@ -1,10 +1,7 @@
 import * as React from 'react'
-import * as Fuse from 'fuse.js'
-import { fuseOpts } from 'src/models/search'
 import GMap from '../components/GMap'
 import { Marker } from 'react-google-maps'
-import { chain, prop, values, curry, map, compose } from 'ramda'
-import { loadInspectionsForLicense, filterBusinesses, AppState, gMapsScriptUrl } from 'models'
+import { loadInspectionsForLicense, filterBusinesses, AppState, gMapsScriptUrl, Business } from 'models'
 import WaitForScript from '../util/WaitForScript'
 import Spinner from '../components/Spinner'
 import { Atom, lift } from '@grammarly/focal'
@@ -26,34 +23,16 @@ let google = window['google']
 let LiftedGMap = lift(GMap as (props: {childs: any}) => JSX.Element)
 
 interface Props {
-  state: Atom<AppState>
+  selectedBusiness: Atom<string>
+  selectedTab: Atom<string>
+  viewType: Atom<string>
+  filteredBusinesses: Observable<Business[]>
 }
 
 export default class FoodSafetyMap2 extends React.Component<Props, any> {
 
   render() {
-    let { state } = this.props
-
-    let index: Observable<Fuse> = state.view(x => x.businesses).map(
-      compose( data => new Fuse(data, fuseOpts)
-             , chain(prop('inspections'))
-             , values
-             )
-    )
-
-    let results = state.view(x => x.ui.query)
-      .combineLatest(index)
-      .map(([ query, index ]) => new Set(index.search(query || "")))
-
-
-    let filteredBusinesses = results.combineLatest(state)
-      .map(([ results, { ui, businesses } ]) => {
-        let filteredBizs = filterBusinesses(ui.filters, businesses)
-        return ui.query ? filteredBizs.filter(x => results.has(x.license)) 
-                        : filteredBizs
-      })
-
-    let selectedBusiness = state.lens(x => x.ui.selectedBusiness)
+    let { filteredBusinesses, selectedBusiness, selectedTab, viewType } = this.props
 
     return (
       <WaitForScript src={gMapsScriptUrl}>
@@ -61,15 +40,16 @@ export default class FoodSafetyMap2 extends React.Component<Props, any> {
           loaded
           ? <LiftedGMap 
               childs={
-                filteredBusinesses.combineLatest(state.map(x => x.ui))
-                  .map(([ businesses, ui ]) => 
-                    businesses.filter(() => ui.viewType === 'marker')
+                Observable.combineLatest(filteredBusinesses, selectedBusiness, viewType)
+                  .map(([ businesses, selectedBiz, viewType ]) => 
+                    businesses.filter(() => viewType === 'marker')
                       .map(bus => renderMarker(
                         () => {
                           selectedBusiness.set(bus.license)
-                          loadInspectionsForLicense(state, bus.license)
+                          loadInspectionsForLicense(window['atom'], bus.license)
+                          selectedTab.set('business')
                         },
-                        ui.selectedBusiness === bus.license,
+                        selectedBiz === bus.license,
                         bus
                       )))
               } />

@@ -32,7 +32,7 @@ export default function FoodMapFilters({
       <button onClick={() => loadDataFromRemote(window['atom'])}>
         <i className="fa fa-sync" />
       </button>
-      {atom.view(s => s.loadingInspections && <Spinner />)}
+      {atom.view(s => s.loadingInspections && <Spinner key="_" />)}
     </F.div>
   )
 }

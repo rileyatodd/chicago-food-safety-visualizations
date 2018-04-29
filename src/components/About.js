@@ -17,12 +17,18 @@ const About = () =>
     </p>
     <h3>Data Display Types</h3>
     <p>
-      You can view the plotted data in two different ways. The default places
-      a marker on the map for each business. This view has the benefit of
-      being able to click on the markers to see the results and violations of
-      the inspections. The other way to view the data is via a heatmap, which
-      is more helpful in determing the relative density of businesses. Combining
-      the heatmap view with the 'Have failed at least once' filter allows one
+      You can view the plotted data in two different ways.
+    </p>
+    <p>
+      The default places a marker on the map for each business. This view has the benefit of
+      being able to click on the markers to see the results and violations of the inspections. 
+    </p>
+    <p>
+      The other way to view the data is via a heatmap, which
+      is more helpful in determing the relative density of businesses. 
+    </p>
+    <p>
+      Combining the heatmap view with the 'Have failed at least once' filter allows one
       to see areas where food inspection failures are more common.
     </p>
   </div>

@@ -1,6 +1,6 @@
 import Task from 'data.task'
 import Maybe from 'data.maybe'
-import { set, over, sefind, chain, compose, curry, flip, lensProp, lensIndex, map } from 'ramda'
+import { set, over, find, chain, compose, curry, flip, lensProp, lensIndex, map } from 'ramda'
 
 export var trace = curry((tag, x) => {console.log(tag, x);return x})
 

@@ -3,7 +3,7 @@ import { allPass, values, filter, groupBy
        , toPairs, T, compose, map, sum
        , prop, any, none, equals, lt
        , replace, split, identity, propEq
-       , find, countBy, isEmpty, all, always as K
+       , find, countBy, isEmpty, all
        } from 'ramda'
 import { getJSON, throwErr, safeFind, set_, trace } from '../util'
 import { F, Atom } from '@grammarly/focal'
@@ -30,6 +30,8 @@ export interface Business {
   license: string
   failCount: number
   inspections: Inspection[]
+  address: string
+  dba_name: string
 }
 
 export interface Inspection {
@@ -71,12 +73,18 @@ const buildPosition = (i: Inspection): LatLng => ({ lat: parseFloat(i.latitude)
                                                   , lng: parseFloat(i.longitude) })
 
 // [Inspection] -> Establishment
-const inspectionsToEstablishment = (inspections: Inspection[]): Business => ({
-  position: buildPosition(head(inspections)),
-  license: head(inspections)['license_'],
-  failCount: sum(map(compose(parseInt, prop('failCount')), inspections)),
-  inspections
-})
+const inspectionsToEstablishment = (inspections: Inspection[]): Business => {
+  let { license_, dba_name, address } = head(inspections)
+
+  return {
+    position: buildPosition(head(inspections)),
+    license: license_,
+    dba_name,
+    address,
+    failCount: sum(map(compose(parseInt, prop('failCount')), inspections)),
+    inspections
+  }
+}
 
 // [Inspection] -> {license: Establishment}
 export const establishmentsByLicense: 

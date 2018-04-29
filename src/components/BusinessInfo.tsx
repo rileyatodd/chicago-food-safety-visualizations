@@ -10,8 +10,7 @@ export default function BusinessInfo({ business, isLoading }) {
 
   if (isLoading) return <Spinner />
 
-  let { inspections } = business
-  let { address, dba_name, facility_type } = inspections[0]
+  let { inspections, address, dba_name } = business
   let resultCounts = countResults(inspections)
   return (
     <div className={styles.container}>
@@ -21,10 +20,6 @@ export default function BusinessInfo({ business, isLoading }) {
           <div>
             <dt>Address</dt>
             <dd>{address}</dd>
-          </div>
-          <div>
-            <dt>Type</dt>
-            <dd>{facility_type}</dd>
           </div>
           <div>
             <dt>Last Failure</dt>

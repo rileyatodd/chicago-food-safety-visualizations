@@ -4,27 +4,50 @@ import About from 'src/components/About'
 import BusinessInfo from 'src/components/BusinessInfo'
 import FoodMapFilters from 'src/components/FoodMapFilters'
 import FoodSafetyMap from 'src/containers/FoodSafetyMap'
+import BusinessList from 'src/components/BusinessList'
 import * as tabStyles from 'src/styles/Tabs.css'
 import * as styles from 'src/styles/Root.css'
 import * as vsStyles from 'src/styles/VisualizationSurface.css'
 import * as cn from 'classnames'
+import * as Fuse from 'fuse.js'
 import { F, Atom, lift } from '@grammarly/focal'
-import * as ui from 'src/models/ui'
-import { Business, AppState } from 'models'
+import { chain, prop, values, curry, map, compose } from 'ramda'
+import { Observable } from 'rxjs'
+import { filterBusinesses, Business, AppState } from 'models'
+import { fuseOpts } from 'src/models/search'
 
 interface Props {
-  atom: Atom<AppState>
+  state: Atom<AppState>
 }
 
 let BusinessInfo$ = lift(BusinessInfo)
 
-export default function Root({ atom }: Props) {
+export default function Root({ state }: Props) {
+  let index: Observable<Fuse> = state.view(x => x.businesses).map(
+    compose( data => new Fuse(data, fuseOpts)
+           , chain(prop('inspections'))
+           , values
+           )
+  )
+
+  let results = state.view(x => x.ui.query)
+    .combineLatest(index)
+    .map(([ query, index ]) => new Set(index.search(query || "")))
+
+
+  let filteredBusinesses: Observable<Business[]> = results.combineLatest(state)
+    .map(([ results, { ui, businesses } ]) => {
+      let filteredBizs = filterBusinesses(ui.filters, businesses)
+      return ui.query ? filteredBizs.filter(x => results.has(x.license)) 
+                      : filteredBizs
+    })
+
   return (
     <div>
       <F.div className={vsStyles.root}>
-        <FoodMapFilters atom={atom.lens(s => s.ui)} />
+        <FoodMapFilters atom={state.lens(s => s.ui)} />
 
-        {atom.view(s => 
+        {state.view(s => 
           Object.keys(s.businesses || {}).length > 950 &&
             <div className={vsStyles.warning}>
               <p>
@@ -38,32 +61,47 @@ export default function Root({ atom }: Props) {
                 inside the bounds of the map.
               </p>
             </div>)}
-        <FoodSafetyMap state={window['atom']} />
+        <FoodSafetyMap 
+          selectedBusiness={state.lens(s => s.ui.selectedBusiness)}
+          selectedTab={state.lens(s => s.ui.selectedTab)}
+          viewType={state.lens(s => s.ui.viewType)}
+          filteredBusinesses={filteredBusinesses}
+        />
       </F.div>
       <div className={styles.tabContainer}>
         <div className={tabStyles.container}>
-          <F.span className={atom.view(s => cn(
+          <F.span className={state.view(s => cn(
                     tabStyles.tab, 
                     {[tabStyles.selected]: s.ui.selectedTab === 'about'})
                   )} 
-                  onClick={() => atom.lens(s => s.ui.selectedTab).set('about')}>
+                  onClick={() => state.lens(s => s.ui.selectedTab).set('about')}>
             About
           </F.span>
-          <F.span className={atom.view(s => cn(
+          <F.span className={state.view(s => cn(
                   tabStyles.tab, 
                   {[tabStyles.selected]: s.ui.selectedTab === 'business'})
                 )}
-                onClick={() => atom.lens(s => s.ui.selectedTab).set('business')}>
+                onClick={() => state.lens(s => s.ui.selectedTab).set('business')}>
             Business
+          </F.span>
+          <F.span className={state.view(s => cn(
+                  tabStyles.tab, 
+                  {[tabStyles.selected]: s.ui.selectedTab === 'businesses'})
+                )}
+                onClick={() => state.lens(s => s.ui.selectedTab).set('businesses')}>
+            Businesses
           </F.span>
         </div>
         <F.div>
-        {atom.view(s =>
+        {state.view(s =>
           s.ui.selectedTab === 'about' ? 
             <About /> :
           s.ui.selectedTab === 'business' ?
-            <BusinessInfo$ business={atom.map(s => s.businesses[s.ui.selectedBusiness])} 
-                           isLoading={atom.map(s => s.ui.loadingInspections)} />
+            <BusinessInfo$ business={state.map(s => s.businesses[s.ui.selectedBusiness])} 
+                           isLoading={state.map(s => s.ui.loadingInspections)} /> :
+          s.ui.selectedTab === 'businesses' ?
+             <BusinessList filteredBusinesses={filteredBusinesses} 
+                           selectedBusiness={state.lens(s => s.ui.selectedBusiness)} />
           : null
         )}
         </F.div>      

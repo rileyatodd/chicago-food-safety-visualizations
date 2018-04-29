@@ -10,7 +10,7 @@ const atom = Atom.create(defaultState)
 window['atom'] = atom
 
 render(
-  <Root atom={atom} />,
+  <Root state={atom} />,
   document.getElementById('root')
 )
 
