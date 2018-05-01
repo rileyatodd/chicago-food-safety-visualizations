@@ -1,0 +1,29 @@
+.group {
+  display: flex;
+  border: solid 2px #efefef;
+  border-radius: 5px;
+}
+
+.group > * {
+  border-radius: 3px;
+}
+
+.group > :first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.group > :last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.group > input {
+  border: none;
+}
+
+.group > :not(input) {
+  background: #e9e9e9;
+  padding: 8px;
+
+}
