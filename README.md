@@ -1,8 +1,7 @@
 # Chicago Food Safety Data Visualizations
 
 ## todo
-- List all locations in a tab
-  - allow selection
-  - filter by search bar
-- Select Location Tab when marker is clicked
+- Make UX of selecting a business from the list better
+  - Probably shouldn't be separate tabs
+  - Maybe slide over to see details and have a back to list button there
 - Add some more filters for rats, nut allergies, etc

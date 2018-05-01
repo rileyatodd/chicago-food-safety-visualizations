@@ -9,44 +9,27 @@ import * as tabStyles from 'src/styles/Tabs.css'
 import * as styles from 'src/styles/Root.css'
 import * as vsStyles from 'src/styles/VisualizationSurface.css'
 import * as cn from 'classnames'
-import * as Fuse from 'fuse.js'
 import { F, Atom, lift } from '@grammarly/focal'
-import { chain, prop, values, curry, map, compose } from 'ramda'
 import { Observable } from 'rxjs'
-import { filterBusinesses, Business, AppState } from 'models'
-import { fuseOpts } from 'src/models/search'
+import { Business, AppState } from 'models'
 
 interface Props {
-  state: Atom<AppState>
+  state: Atom<AppState>,
+  filteredBusinesses: Observable<Business[]>
 }
 
 let BusinessInfo$ = lift(BusinessInfo)
 
-export default function Root({ state }: Props) {
-  let index: Observable<Fuse> = state.view(x => x.businesses).map(
-    compose( data => new Fuse(data, fuseOpts)
-           , chain(prop('inspections'))
-           , values
-           )
-  )
-
-  let results = state.view(x => x.ui.query)
-    .combineLatest(index)
-    .map(([ query, index ]) => new Set(index.search(query || "")))
-
-
-  let filteredBusinesses: Observable<Business[]> = results.combineLatest(state)
-    .map(([ results, { ui, businesses } ]) => {
-      let filteredBizs = filterBusinesses(ui.filters, businesses)
-      return ui.query ? filteredBizs.filter(x => results.has(x.license)) 
-                      : filteredBizs
-    })
+export default function Root({ state, filteredBusinesses }: Props) {
+  
 
   return (
     <div>
       <F.div className={vsStyles.root}>
-        <FoodMapFilters atom={state.lens(s => s.ui)} />
-
+        <FoodMapFilters viewType={state.lens(s => s.ui.viewType)} 
+                        query={state.lens(s => s.ui.query)}
+                        passFail={state.lens(s => s.ui.filters.passFail)} 
+                        loadingInspections={state.lens(s => s.ui.loadingInspections)} />
         {state.view(s => 
           Object.keys(s.businesses || {}).length > 950 &&
             <div className={vsStyles.warning}>
