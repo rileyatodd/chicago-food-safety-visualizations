@@ -6,7 +6,7 @@ import { Atom } from '@grammarly/focal'
 import { omit, map, chain, values, compose, prop } from 'ramda'
 import { loadInspectionsForLicense, filterBusinesses, defaultState, Business, gMapsScriptUrl } from './models'
 import { fuseOpts } from './models/search'
-import { Observable } from 'rxjs'
+import { BehaviorSubject, Observable } from 'rxjs'
 import * as Fuse from 'fuse.js'
 let { loadScript } = require('util')
 
@@ -38,20 +38,26 @@ let filteredBusinesses: Observable<Business[]> = results.combineLatest(atom)
 
 let gMapsLoaded = atom.lens(s => s.ui.isGmapsLoaded).filter(Boolean)
 
-let heatMap
+let heatMap = gMapsLoaded
+  .map(() => new window['google'].maps.visualization.HeatmapLayer({
+    data: [],
+    radius: 20
+  }))
+  .share()
+
 gMapsLoaded.flatMap(() => filteredBusinesses)
   .map(map(biz => new window['google'].maps.LatLng(biz.position)))
-  .subscribe(heatMapData => {
-    heatMap = heatMap || new window['google'].maps.visualization.HeatmapLayer({
-      data: heatMapData,
-      radius: 20
-    })
-    heatMap.setData(heatMapData)
+  .combineLatest(heatMap)
+  .subscribe(([data, heatMap]) => {
+    window['a'] = heatMap
+    heatMap.setData(data)
   })
 
 atom.lens(s => s.ui.viewType)
-  .subscribe(viewType => {
-    heatMap && heatMap.setMap(viewType == 'heatmap' ? window['gMap'] : null)
+  .combineLatest(heatMap)
+  .subscribe(([viewType, heatMap]) => {
+    window['b'] = heatMap
+    heatMap.setMap(viewType == 'heatmap' ? window['gMap'] : null)
   })
 
 atom.lens(s => s.ui.selectedBusiness).filter(Boolean).subscribe(
