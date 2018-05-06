@@ -47,6 +47,7 @@ export default function Root({ state, filteredBusinesses }: Props) {
           viewType={state.lens(s => s.ui.viewType)}
           filteredBusinesses={filteredBusinesses}
           isGmapsLoaded={state.lens(s => s.ui.isGmapsLoaded)}
+          map={state.lens(s => s.map)}
         />
       </F.div>
       <div className={styles.tabContainer}>

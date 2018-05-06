@@ -6,7 +6,6 @@ import * as inputGroupS from 'src/styles/InputGroup.css'
 import { F, Atom } from '@grammarly/focal'
 import * as ui from 'src/models/ui'
 import * as cn from 'classnames'
-import { loadDataFromRemote, AppState } from 'src/models' 
 
 interface Props {
   viewType: Atom<string>
@@ -40,9 +39,6 @@ export default function FoodMapFilters({ viewType, query, passFail, loadingBusin
         <i className='fa fa-search' />
         <input type='text' onChange={e => query.set(e.target.value)}/>
       </div>
-      <button onClick={() => loadDataFromRemote(window['atom'])}>
-        <i className="fa fa-sync" />
-      </button>
       {loadingBusinesses.view(loading => loading && <Spinner key="_" />)}
     </F.div>
   )

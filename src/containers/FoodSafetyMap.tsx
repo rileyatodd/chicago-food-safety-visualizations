@@ -17,7 +17,7 @@ const renderMarker = (handleClick, selected, business) =>
   />
 
 let google = window['google']
-let LiftedGMap = lift(GMap as (props: {childs: any}) => JSX.Element)
+let LiftedGMap = lift(GMap as (props: {childs: any, refFn: any}) => JSX.Element)
 
 interface Props {
   selectedBusiness: Atom<string>
@@ -25,12 +25,13 @@ interface Props {
   viewType: Atom<string>
   filteredBusinesses: Observable<Business[]>
   isGmapsLoaded: Atom<boolean>
+  map: Atom<any>
 }
 
 export default class FoodSafetyMap extends React.Component<Props, any> {
 
   render() {
-    let { filteredBusinesses, selectedBusiness, selectedTab, viewType, isGmapsLoaded } = this.props
+    let { filteredBusinesses, selectedBusiness, selectedTab, viewType, isGmapsLoaded, map } = this.props
 
     return (
       <F.div>
@@ -48,7 +49,9 @@ export default class FoodSafetyMap extends React.Component<Props, any> {
                         selectedBiz === bus.license,
                         bus
                       )))
-              } />
+              }
+              refFn={gMap => map.set(gMap)} 
+            />
           : <Spinner />)}
       </F.div>
     )

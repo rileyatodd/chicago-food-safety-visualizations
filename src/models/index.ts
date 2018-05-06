@@ -12,6 +12,7 @@ import * as ui from './ui'
 export const gMapsScriptUrl = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBu9YoSsRP2XYViyxIcPaMgwg2Engc2Nh4&libraries=geometry,visualization"
 
 export interface AppState {
+  map: any
   ui: ui.State
   search: {
     results: any
@@ -20,6 +21,7 @@ export interface AppState {
 }
 
 export const defaultState: AppState = {
+  map: null,
   ui: ui.defaultUIState,
   businesses: {},
   search: null
@@ -127,7 +129,7 @@ const businessesQuery =
   + '&$group=license_,latitude,longitude,address,dba_name'
 
 export const loadDataFromRemote = (atom: Atom<AppState>) => {
-  let bounds = window['gMap'].getBounds()
+  let bounds = atom.get().map.getBounds()
   let geoQuery = validateBounds(bounds) ? buildGeoQuery(bounds.toJSON()) : ''
   atom.lens(x => x.ui.loadingBusinesses).set(true)
   getJSON(remoteDataUrl + businessesQuery + geoQuery).fork(
