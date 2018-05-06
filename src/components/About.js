@@ -5,26 +5,18 @@ const About = () =>
     <h1>Chicago Food Safety Inspections</h1>
     <h2>About</h2>
     <p>
-      This app sources food safety inspection data 
-      from <a href="http://data.cityofchicago.org">data.cityofchicago.org</a> and 
-      plots it on a map. Click the refresh 
-      button to load recent inspections that occurred within the bounds of the map.
+      This app visualizes food safety inspection data 
+      from <a href="http://data.cityofchicago.org">data.cityofchicago.org</a>.
     </p>
-    <h3>Filtering</h3>
-    <p>
-      Once the inspection data has been loaded you can filter it by selecting a
-      result filter.
-    </p>
-    <h3>Data Display Types</h3>
     <p>
       You can view the plotted data in two different ways.
     </p>
     <p>
-      The default places a marker on the map for each business. This view has the benefit of
-      being able to click on the markers to see the results and violations of the inspections. 
+      The default places a marker on the map for each business that you can click on to view 
+      detailed info about the business and the results of all past inspections of it.
     </p>
     <p>
-      The other way to view the data is via a heatmap, which
+      The other way to view the data is with a heatmap, which
       is more helpful in determing the relative density of businesses. 
     </p>
     <p>

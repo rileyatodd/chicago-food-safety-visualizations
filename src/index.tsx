@@ -64,7 +64,7 @@ atom.lens(s => s.ui.selectedBusiness).filter(Boolean).subscribe(
 atom.lens(s => s.map)
   .filter(Boolean)
   .flatMap(map => Observable.fromEventPattern(f => map.addListener('bounds_changed', f)))
-  .debounceTime(400)
+  .debounceTime(800)
   .subscribe(() => loadDataFromRemote(atom))
 
 render(

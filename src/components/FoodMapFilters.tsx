@@ -17,14 +17,11 @@ interface Props {
 export default function FoodMapFilters({ viewType, query, passFail, loadingBusinesses }: Props) {
   return (
     <F.div className={styles.container}>
-      <div>
-        <label style={{display: 'block'}}>Result Filter</label>
-        <select defaultValue="all" onChange={e => passFail.set(e.target.value)}>
-          <option value="all">All</option>
-          <option value="pass">Have always passed</option>
-          <option value="fail">Have failed at least once</option>
-        </select>
-      </div>
+      <select defaultValue="all" onChange={e => passFail.set(e.target.value)}>
+        <option value="all">All</option>
+        <option value="pass">Have always passed</option>
+        <option value="fail">Have failed at least once</option>
+      </select>
       <div className={btnGroupS.buttonGroup}>
         <F.button onClick={() => viewType.set('marker')} 
                   className={viewType.view(type => cn({[btnGroupS.selected]: type === 'marker'}, btnGroupS.btn))}>
