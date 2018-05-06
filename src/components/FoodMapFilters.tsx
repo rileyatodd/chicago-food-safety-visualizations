@@ -12,10 +12,10 @@ interface Props {
   viewType: Atom<string>
   query: Atom<string>
   passFail: Atom<string>
-  loadingInspections: Atom<boolean>
+  loadingBusinesses: Atom<boolean>
 }
 
-export default function FoodMapFilters({ viewType, query, passFail, loadingInspections }: Props) {
+export default function FoodMapFilters({ viewType, query, passFail, loadingBusinesses }: Props) {
   return (
     <F.div className={styles.container}>
       <div>
@@ -43,7 +43,7 @@ export default function FoodMapFilters({ viewType, query, passFail, loadingInspe
       <button onClick={() => loadDataFromRemote(window['atom'])}>
         <i className="fa fa-sync" />
       </button>
-      {loadingInspections.view(loading => loading && <Spinner key="_" />)}
+      {loadingBusinesses.view(loading => loading && <Spinner key="_" />)}
     </F.div>
   )
 }

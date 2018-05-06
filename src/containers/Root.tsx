@@ -7,7 +7,6 @@ import FoodSafetyMap from 'src/containers/FoodSafetyMap'
 import BusinessList from 'src/components/BusinessList'
 import * as tabStyles from 'src/styles/Tabs.css'
 import * as styles from 'src/styles/Root.css'
-import * as vsStyles from 'src/styles/VisualizationSurface.css'
 import * as cn from 'classnames'
 import { F, Atom, lift } from '@grammarly/focal'
 import { Observable } from 'rxjs'
@@ -21,18 +20,16 @@ interface Props {
 let BusinessInfo$ = lift(BusinessInfo)
 
 export default function Root({ state, filteredBusinesses }: Props) {
-  
-
   return (
     <div>
-      <F.div className={vsStyles.root}>
+      <F.div className={styles.root}>
         <FoodMapFilters viewType={state.lens(s => s.ui.viewType)} 
                         query={state.lens(s => s.ui.query)}
                         passFail={state.lens(s => s.ui.filters.passFail)} 
-                        loadingInspections={state.lens(s => s.ui.loadingInspections)} />
+                        loadingBusinesses={state.lens(s => s.ui.loadingBusinesses)} />
         {state.view(s => 
           Object.keys(s.businesses || {}).length > 950 &&
-            <div className={vsStyles.warning}>
+            <div className={styles.warning}>
               <p>
                 Your last search returned quite a few businesses!
                 There may be a few businesses missing from your results due
@@ -49,6 +46,7 @@ export default function Root({ state, filteredBusinesses }: Props) {
           selectedTab={state.lens(s => s.ui.selectedTab)}
           viewType={state.lens(s => s.ui.viewType)}
           filteredBusinesses={filteredBusinesses}
+          isGmapsLoaded={state.lens(s => s.ui.isGmapsLoaded)}
         />
       </F.div>
       <div className={styles.tabContainer}>
@@ -61,17 +59,17 @@ export default function Root({ state, filteredBusinesses }: Props) {
             About
           </F.span>
           <F.span className={state.view(s => cn(
-                  tabStyles.tab, 
-                  {[tabStyles.selected]: s.ui.selectedTab === 'business'})
-                )}
-                onClick={() => state.lens(s => s.ui.selectedTab).set('business')}>
+                    tabStyles.tab, 
+                    {[tabStyles.selected]: s.ui.selectedTab === 'business'})
+                  )}
+                  onClick={() => state.lens(s => s.ui.selectedTab).set('business')}>
             Business
           </F.span>
           <F.span className={state.view(s => cn(
-                  tabStyles.tab, 
-                  {[tabStyles.selected]: s.ui.selectedTab === 'businesses'})
-                )}
-                onClick={() => state.lens(s => s.ui.selectedTab).set('businesses')}>
+                    tabStyles.tab, 
+                    {[tabStyles.selected]: s.ui.selectedTab === 'businesses'})
+                  )}
+                  onClick={() => state.lens(s => s.ui.selectedTab).set('businesses')}>
             Businesses
           </F.span>
         </div>

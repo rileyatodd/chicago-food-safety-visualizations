@@ -1,10 +1,9 @@
 import * as React from 'react'
 import GMap from '../components/GMap'
 import { Marker } from 'react-google-maps'
-import { loadInspectionsForLicense, filterBusinesses, AppState, gMapsScriptUrl, Business } from 'models'
-import WaitForScript from '../util/WaitForScript'
+import { filterBusinesses, AppState, gMapsScriptUrl, Business } from 'models'
 import Spinner from '../components/Spinner'
-import { Atom, lift } from '@grammarly/focal'
+import { F, Atom, lift } from '@grammarly/focal'
 import { Observable } from 'rxjs'
 
 const blueMarkerUrl = 'http://www.rileyatodd.com/images/map-marker.png'
@@ -14,10 +13,8 @@ const renderMarker = (handleClick, selected, business) =>
           key={business.license}
           onClick={handleClick} 
           zIndex={selected ? 100 : 20}
-          icon={
-            selected ? { url: blueMarkerUrl } : null
-          }
-          />
+          icon={selected ? { url: blueMarkerUrl } : null}
+  />
 
 let google = window['google']
 let LiftedGMap = lift(GMap as (props: {childs: any}) => JSX.Element)
@@ -27,17 +24,17 @@ interface Props {
   selectedTab: Atom<string>
   viewType: Atom<string>
   filteredBusinesses: Observable<Business[]>
+  isGmapsLoaded: Atom<boolean>
 }
 
-export default class FoodSafetyMap2 extends React.Component<Props, any> {
+export default class FoodSafetyMap extends React.Component<Props, any> {
 
   render() {
-    let { filteredBusinesses, selectedBusiness, selectedTab, viewType } = this.props
+    let { filteredBusinesses, selectedBusiness, selectedTab, viewType, isGmapsLoaded } = this.props
 
     return (
-      <WaitForScript src={gMapsScriptUrl}>
-        {({ loaded }) => (
-          loaded
+      <F.div>
+        {isGmapsLoaded.view(loaded => loaded
           ? <LiftedGMap 
               childs={
                 Observable.combineLatest(filteredBusinesses, selectedBusiness, viewType)
@@ -46,16 +43,14 @@ export default class FoodSafetyMap2 extends React.Component<Props, any> {
                       .map(bus => renderMarker(
                         () => {
                           selectedBusiness.set(bus.license)
-                          loadInspectionsForLicense(window['atom'], bus.license)
                           selectedTab.set('business')
                         },
                         selectedBiz === bus.license,
                         bus
                       )))
               } />
-          : <Spinner />
-        )}
-      </WaitForScript>
+          : <Spinner />)}
+      </F.div>
     )
   }
 }

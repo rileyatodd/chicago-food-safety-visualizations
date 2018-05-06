@@ -144,9 +144,9 @@ export const loadInspectionsForLicense = (atom: Atom<AppState>, license) => {
   loadingInspections.set(true)
   getJSON(remoteDataUrl + `?$where=license_ = ${license}&$order=inspection_date DESC`)
     .fork(
-      throwErr, 
+      err => (loadingInspections.set(false), throwErr(err)), 
       inspections => {
-        atom.lens(x => x.businesses).modify(set_([license, 'inspections'], inspections))
+        atom.lens('businesses', license, 'inspections').set(inspections)
         loadingInspections.set(false)
       }
     )

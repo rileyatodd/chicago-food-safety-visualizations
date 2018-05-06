@@ -4,13 +4,17 @@ import { render } from 'react-dom'
 import Root from './containers/Root'
 import { Atom } from '@grammarly/focal'
 import { omit, map, chain, values, compose, prop } from 'ramda'
-import { filterBusinesses, defaultState, Business } from './models'
+import { loadInspectionsForLicense, filterBusinesses, defaultState, Business, gMapsScriptUrl } from './models'
 import { fuseOpts } from './models/search'
 import { Observable } from 'rxjs'
 import * as Fuse from 'fuse.js'
+let { loadScript } = require('util')
 
 const atom = Atom.create(defaultState)
 window['atom'] = atom
+
+loadScript({ src: gMapsScriptUrl
+           , onload: () => atom.lens(s => s.ui.isGmapsLoaded).set(true) })
 
 let index: Observable<Fuse> = atom.view(x => x.businesses).map(
   compose( data => new Fuse(data, fuseOpts)
@@ -30,13 +34,14 @@ let filteredBusinesses: Observable<Business[]> = results.combineLatest(atom)
     return ui.query ? filteredBizs.filter(x => results.has(x.license)) 
                     : filteredBizs
   })
+  .filter(Boolean)
+
+let gMapsLoaded = atom.lens(s => s.ui.isGmapsLoaded).filter(Boolean)
 
 let heatMap
-filteredBusinesses
-  .filter(data => data && window['google'])// TODO, would be nice to have an observable of the google script loading
+gMapsLoaded.flatMap(() => filteredBusinesses)
   .map(map(biz => new window['google'].maps.LatLng(biz.position)))
-  .combineLatest(atom.view(s => s.ui.viewType))
-  .subscribe(([ heatMapData, viewType ]) => {
+  .subscribe(heatMapData => {
     heatMap = heatMap || new window['google'].maps.visualization.HeatmapLayer({
       data: heatMapData,
       radius: 20
@@ -44,14 +49,14 @@ filteredBusinesses
     heatMap.setData(heatMapData)
   })
 
-Observable.combineLatest(
-  atom.view(s => s.ui.viewType),
-  atom.view(s => s.businesses)
-)
-  .subscribe(([ viewType, _ ]) => {
+atom.lens(s => s.ui.viewType)
+  .subscribe(viewType => {
     heatMap && heatMap.setMap(viewType == 'heatmap' ? window['gMap'] : null)
   })
 
+atom.lens(s => s.ui.selectedBusiness).filter(Boolean).subscribe(
+  license => loadInspectionsForLicense(atom, license)
+)
 
 render(
   <Root state={atom} filteredBusinesses={filteredBusinesses} />,
