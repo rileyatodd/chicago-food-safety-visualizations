@@ -48,17 +48,11 @@ let heatMap = gMapsLoaded
 gMapsLoaded.flatMap(() => filteredBusinesses)
   .map(map(biz => new window['google'].maps.LatLng(biz.position)))
   .combineLatest(heatMap)
-  .subscribe(([data, heatMap]) => {
-    window['a'] = heatMap
-    heatMap.setData(data)
-  })
+  .subscribe(([data, heatMap]) => heatMap.setData(data))
 
 atom.lens(s => s.ui.viewType)
   .combineLatest(heatMap)
-  .subscribe(([viewType, heatMap]) => {
-    window['b'] = heatMap
-    heatMap.setMap(viewType == 'heatmap' ? window['gMap'] : null)
-  })
+  .subscribe(([viewType, heatMap]) => heatMap.setMap(viewType == 'heatmap' ? window['gMap'] : null))
 
 atom.lens(s => s.ui.selectedBusiness).filter(Boolean).subscribe(
   license => loadInspectionsForLicense(atom, license)
