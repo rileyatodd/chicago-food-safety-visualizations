@@ -3,7 +3,7 @@ import * as React from 'react'
 import { render } from 'react-dom'
 import Root from './containers/Root'
 import { Atom } from '@grammarly/focal'
-import { omit, map, chain, values, compose, prop } from 'ramda'
+import { range, omit, map, chain, values, compose, prop } from 'ramda'
 import { loadDataFromRemote, loadInspectionsForLicense, filterBusinesses, defaultState, Business, gMapsScriptUrl } from './models'
 import { fuseOpts } from './models/search'
 import { Observable } from 'rxjs'
@@ -15,6 +15,10 @@ window['atom'] = atom
 
 loadScript({ src: gMapsScriptUrl
            , onload: () => atom.lens(s => s.ui.isGmapsLoaded).set(true) })
+
+// atom.lens(s => s.ui.selectedBusiness).filter(Boolean).subscribe(
+//   () => atom.lens(s => s.ui.selectedTab).set('business')
+// )
 
 let index: Observable<Fuse> = atom.view(x => x.businesses).map(
   compose( data => new Fuse(data, fuseOpts)
@@ -46,7 +50,7 @@ let heatMap = gMapsLoaded
   .share()
 
 gMapsLoaded.flatMap(() => filteredBusinesses)
-  .map(map(biz => new window['google'].maps.LatLng(biz.position)))
+  .map(map(biz => ({location: new window['google'].maps.LatLng(biz.position), weight: biz.failCount})))
   .combineLatest(heatMap)
   .subscribe(([data, heatMap]) => heatMap.setData(data))
 

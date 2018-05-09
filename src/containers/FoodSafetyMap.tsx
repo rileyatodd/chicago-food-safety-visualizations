@@ -42,10 +42,7 @@ export default class FoodSafetyMap extends React.Component<Props, any> {
                   .map(([ businesses, selectedBiz, viewType ]) => 
                     businesses.filter(() => viewType === 'marker')
                       .map(bus => renderMarker(
-                        () => {
-                          selectedBusiness.set(bus.license)
-                          selectedTab.set('business')
-                        },
+                        () => selectedBusiness.set(bus.license),
                         selectedBiz === bus.license,
                         bus
                       )))

@@ -1,5 +1,5 @@
 export interface State {
-  filters: {passFail: string}
+  filters: {}
   viewType: string
   loadingInspections: boolean;
   loadingBusinesses: boolean;
@@ -10,12 +10,12 @@ export interface State {
 }
 
 export const defaultUIState: State = {
-  filters: {passFail: 'all'}, 
+  filters: {}, 
   viewType: 'marker', 
   loadingInspections: false,
   loadingBusinesses: false, 
   isGmapsLoaded: false,
   query: null, 
   selectedBusiness: null,
-  selectedTab: 'about'
+  selectedTab: 'businesses'
 }

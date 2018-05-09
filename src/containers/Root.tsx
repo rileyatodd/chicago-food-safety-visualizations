@@ -23,10 +23,6 @@ export default function Root({ state, filteredBusinesses }: Props) {
   return (
     <div>
       <F.div className={styles.root}>
-        <FoodMapFilters viewType={state.lens(s => s.ui.viewType)} 
-                        query={state.lens(s => s.ui.query)}
-                        passFail={state.lens(s => s.ui.filters.passFail)} 
-                        loadingBusinesses={state.lens(s => s.ui.loadingBusinesses)} />
         {state.view(s => 
           Object.keys(s.businesses || {}).length > 950 &&
             <div className={styles.warning}>
@@ -49,23 +45,12 @@ export default function Root({ state, filteredBusinesses }: Props) {
           isGmapsLoaded={state.lens(s => s.ui.isGmapsLoaded)}
           map={state.lens(s => s.map)}
         />
+        <FoodMapFilters viewType={state.lens(s => s.ui.viewType)} 
+                        query={state.lens(s => s.ui.query)}
+                        loadingBusinesses={state.lens(s => s.ui.loadingBusinesses)} />
       </F.div>
       <div className={styles.tabContainer}>
         <div className={tabStyles.container}>
-          <F.span className={state.view(s => cn(
-                    tabStyles.tab, 
-                    {[tabStyles.selected]: s.ui.selectedTab === 'about'})
-                  )} 
-                  onClick={() => state.lens(s => s.ui.selectedTab).set('about')}>
-            About
-          </F.span>
-          <F.span className={state.view(s => cn(
-                    tabStyles.tab, 
-                    {[tabStyles.selected]: s.ui.selectedTab === 'business'})
-                  )}
-                  onClick={() => state.lens(s => s.ui.selectedTab).set('business')}>
-            Business
-          </F.span>
           <F.span className={state.view(s => cn(
                     tabStyles.tab, 
                     {[tabStyles.selected]: s.ui.selectedTab === 'businesses'})
@@ -73,17 +58,21 @@ export default function Root({ state, filteredBusinesses }: Props) {
                   onClick={() => state.lens(s => s.ui.selectedTab).set('businesses')}>
             Businesses
           </F.span>
+          <F.span className={state.view(s => cn(
+                    tabStyles.tab, 
+                    {[tabStyles.selected]: s.ui.selectedTab === 'about'})
+                  )} 
+                  onClick={() => state.lens(s => s.ui.selectedTab).set('about')}>
+            About
+          </F.span>
         </div>
-        <F.div>
+        <F.div className={tabStyles.content}>
         {state.view(s =>
-          s.ui.selectedTab === 'about' ? 
-            <About /> :
-          s.ui.selectedTab === 'business' ?
-            <BusinessInfo$ business={state.map(s => s.businesses[s.ui.selectedBusiness])} 
-                           isLoading={state.map(s => s.ui.loadingInspections)} /> :
           s.ui.selectedTab === 'businesses' ?
-             <BusinessList filteredBusinesses={filteredBusinesses} 
-                           selectedBusiness={state.lens(s => s.ui.selectedBusiness)} />
+            <BusinessList filteredBusinesses={filteredBusinesses} 
+                          selectedBusiness={state.lens(s => s.ui.selectedBusiness)} /> :
+          s.ui.selectedTab === 'about' ? 
+            <About />
           : null
         )}
         </F.div>      

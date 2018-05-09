@@ -3,6 +3,8 @@ import { F, Atom, lift } from '@grammarly/focal'
 import { values, map } from 'ramda'
 import { Business, AppState } from 'models'
 import { Observable } from 'rxjs'
+import BusinessInfo from 'src/components/BusinessInfo'
+import * as styles from 'src/styles/BusinessList.css'
 
 interface Props {
   filteredBusinesses: Observable<Business[]>
@@ -11,13 +13,11 @@ interface Props {
 
 export default function BusinessList({ filteredBusinesses, selectedBusiness }: Props) {
   return (
-    <F.ul>
+    <F.ul className={styles.list}>
       {filteredBusinesses.map(map(biz => (
-        <div key={biz.license} onClick={() => selectedBusiness.set(biz.license)}>
-          <h3>{biz.dba_name}</h3>
-          <div>{biz.address}</div>
-
-        </div>
+        <li className={styles.card} key={biz.license} onClick={() => selectedBusiness.set(biz.license)}>
+          <BusinessInfo business={biz} isLoading={false} focused={selectedBusiness.get() === biz.license} />
+        </li>
       )))}
     </F.ul>
   )

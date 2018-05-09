@@ -41,15 +41,15 @@ export interface Inspection {
   longitude: string
   license: string
   failCount: string
+  inspection_id: string
+  inspection_date: string
+  results: string
+  violations: string
 }
 
 // Organizes possible filters into a queryable hierarchy
 let filters = {
-  passFail: {
-    all : T,
-    pass: propEq('failCount', 0),
-    fail: compose(lt(0), prop('failCount'))
-  }
+  
 }
 
 // {filterType: filterName} -> [Lens]

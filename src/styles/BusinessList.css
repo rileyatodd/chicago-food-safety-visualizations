@@ -1,0 +1,20 @@
+.list {
+  padding: 0;
+  margin: 0;
+}
+
+.list li {
+  list-style: none;
+  cursor: pointer;
+}
+
+.name {
+  margin-top: 0;
+}
+
+.card {
+  box-shadow: 1px -1px 1px 1px rgba(0,0,0,.3);
+  padding: 8px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}

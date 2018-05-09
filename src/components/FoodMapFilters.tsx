@@ -10,18 +10,13 @@ import * as cn from 'classnames'
 interface Props {
   viewType: Atom<string>
   query: Atom<string>
-  passFail: Atom<string>
   loadingBusinesses: Atom<boolean>
 }
 
-export default function FoodMapFilters({ viewType, query, passFail, loadingBusinesses }: Props) {
+export default function FoodMapFilters({ viewType, query, loadingBusinesses }: Props) {
   return (
     <F.div className={styles.container}>
-      <select defaultValue="all" onChange={e => passFail.set(e.target.value)}>
-        <option value="all">All</option>
-        <option value="pass">Have always passed</option>
-        <option value="fail">Have failed at least once</option>
-      </select>
+      {loadingBusinesses.view(loading => loading && <Spinner key="_" />)}
       <div className={btnGroupS.buttonGroup}>
         <F.button onClick={() => viewType.set('marker')} 
                   className={viewType.view(type => cn({[btnGroupS.selected]: type === 'marker'}, btnGroupS.btn))}>
@@ -36,7 +31,6 @@ export default function FoodMapFilters({ viewType, query, passFail, loadingBusin
         <i className='fa fa-search' />
         <input type='text' onChange={e => query.set(e.target.value)}/>
       </div>
-      {loadingBusinesses.view(loading => loading && <Spinner key="_" />)}
     </F.div>
   )
 }

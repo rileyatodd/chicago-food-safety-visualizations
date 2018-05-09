@@ -1,11 +1,18 @@
 import * as React from 'react'
 let format = require('date-fns/format')
-import { lastFailureDate, countResults } from 'models'
+import { lastFailureDate, countResults, Business } from 'models'
 import Violations from 'src/components/Violations'
 import Spinner from 'src/components/Spinner'
 import * as styles from 'src/styles/BusinessInfo.css'
+import * as cn from 'classnames'
 
-export default function BusinessInfo({ business, isLoading }) {
+interface Props {
+  business: Business
+  isLoading: boolean
+  focused: boolean
+}
+
+export default function BusinessInfo({ business, isLoading, focused }: Props) {
   if (!business) return <div style={{height: '20px'}}></div>
 
   if (isLoading) return <Spinner />
@@ -13,7 +20,7 @@ export default function BusinessInfo({ business, isLoading }) {
   let { inspections, address, dba_name } = business
   let resultCounts = countResults(inspections)
   return (
-    <div className={styles.container}>
+    <div className={cn(styles.container, focused && styles.focused)}>
       <div className={styles.metadataContainer}>
         <h3>{dba_name}</h3>
         <dl>

@@ -24,6 +24,15 @@
   margin: 0;
 }
 
+.container {
+  height: 40px;
+  transition: height 400ms ease-in-out;
+}
+
+.container.focused {
+  height: auto;
+}
+
 .metadataContainer dl {
   display: flex;
   flex-wrap: wrap;
