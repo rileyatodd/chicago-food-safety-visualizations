@@ -16,12 +16,9 @@ const About = () =>
       detailed info about the business and the results of all past inspections of it.
     </p>
     <p>
-      The other way to view the data is with a heatmap, which
-      is more helpful in determing the relative density of businesses. 
-    </p>
-    <p>
-      Combining the heatmap view with the 'Have failed at least once' filter allows one
-      to see areas where food inspection failures are more common.
+      The other way to view the data is with a heatmap. The heatmap weights each business
+      by the number of times it has failed inspection which
+      is helpful for spotting areas with relatively high failure density. 
     </p>
   </div>
 
