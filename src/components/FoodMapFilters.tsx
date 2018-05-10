@@ -17,7 +17,7 @@ export default function FoodMapFilters({ viewType, query, loadingBusinesses }: P
   return (
     <F.div className={styles.container}>
       {loadingBusinesses.view(loading => loading && <Spinner key="_" />)}
-      <div className={btnGroupS.buttonGroup}>
+      <div className={cn(btnGroupS.buttonGroup, styles.viewSelector)}>
         <F.button onClick={() => viewType.set('marker')} 
                   className={viewType.view(type => cn({[btnGroupS.selected]: type === 'marker'}, btnGroupS.btn))}>
           <i className='fa fa-map-marker-alt' />
@@ -29,7 +29,7 @@ export default function FoodMapFilters({ viewType, query, loadingBusinesses }: P
       </div>
       <div className={inputGroupS.group}>
         <i className='fa fa-search' />
-        <input type='text' onChange={e => query.set(e.target.value)}/>
+        <input className={styles.searchInput} type='text' onChange={e => query.set(e.target.value)}/>
       </div>
     </F.div>
   )

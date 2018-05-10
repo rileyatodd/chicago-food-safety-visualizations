@@ -1,8 +1,6 @@
 .container {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
 }
 
 .container > * {
@@ -11,4 +9,14 @@
 
 button {
   background-color: #dedede;
+}
+
+.viewSelector {
+  flex: 1 0 auto;
+}
+
+.searchInput {
+  width: 100%;
+  max-width: 500px;
+  min-width: 100px;
 }

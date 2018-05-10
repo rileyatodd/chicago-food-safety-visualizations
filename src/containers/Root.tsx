@@ -70,7 +70,8 @@ export default function Root({ state, filteredBusinesses }: Props) {
         {state.view(s =>
           s.ui.selectedTab === 'businesses' ?
             <BusinessList filteredBusinesses={filteredBusinesses} 
-                          selectedBusiness={state.lens(s => s.ui.selectedBusiness)} /> :
+                          selectedBusiness={state.lens(s => s.ui.selectedBusiness)}
+                          isLoading={state.lens(s => s.ui.loadingInspections)} /> :
           s.ui.selectedTab === 'about' ? 
             <About />
           : null
