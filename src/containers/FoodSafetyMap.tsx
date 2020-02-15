@@ -6,7 +6,7 @@ import Spinner from '../components/Spinner'
 import { F, Atom, lift } from '@grammarly/focal'
 import { Observable } from 'rxjs'
 
-const blueMarkerUrl = 'http://www.rileyatodd.com/images/map-marker.png'
+const blueMarkerUrl = '/images/map-marker.png'
 
 const renderMarker = (handleClick, selected, business) =>
   <Marker position={business.position}
