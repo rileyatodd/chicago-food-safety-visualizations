@@ -14,11 +14,7 @@ const atom = Atom.create(defaultState)
 window['atom'] = atom
 
 loadScript({ src: gMapsScriptUrl
-           , onload: () => atom.lens(s => s.ui.isGmapsLoaded).set(true) })
-
-// atom.lens(s => s.ui.selectedBusiness).filter(Boolean).subscribe(
-//   () => atom.lens(s => s.ui.selectedTab).set('business')
-// )
+           , onload: () => atom.lens('ui', 'isGmapsLoaded').set(true) })
 
 let index: Observable<Fuse> = atom.view(x => x.businesses).map(
   compose( data => new Fuse(data, fuseOpts)
