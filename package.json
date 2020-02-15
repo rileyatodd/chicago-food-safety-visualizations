@@ -6,7 +6,7 @@
     "start": "webpack-dev-server -d --inline --hot --content-base public/",
     "test": "node_modules/babel-cli/bin/babel-node.js test/containers/FoodSafetyMap.js",
     "build": "webpack -p",
-    "deploy": "gsutil cp dist/bundle.js gs://www.rileyatodd.com/javascripts/food-safety-bundle.js"
+    "deploy": "gsutil cp dist/bundle.js gs://www.rileyatodd.com/javascripts/food-safety-bundle.js && gsutil rsync public/images/ gs://www.rileyatodd.com/images/"
   },
   "dependencies": {
     "@grammarly/focal": "^0.6.437",
