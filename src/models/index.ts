@@ -128,7 +128,7 @@ const businessesQuery =
   + ',sum(case(results = "Fail", 1, true, 0)) as failCount'
   + '&$group=license_,latitude,longitude,address,dba_name'
 
-export const loadDataFromRemote = (atom: Atom<AppState>) => {
+export const loadBusinesses = (atom: Atom<AppState>) => {
   let bounds = atom.get().map.getBounds()
   let geoQuery = validateBounds(bounds) ? buildGeoQuery(bounds.toJSON()) : ''
   atom.lens(x => x.ui.loadingBusinesses).set(true)

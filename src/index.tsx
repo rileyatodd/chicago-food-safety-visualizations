@@ -4,7 +4,7 @@ import { render } from 'react-dom'
 import Root from './containers/Root'
 import { Atom } from '@grammarly/focal'
 import { range, omit, map, chain, values, compose, prop } from 'ramda'
-import { loadDataFromRemote, loadInspectionsForLicense, filterBusinesses, defaultState, Business, gMapsScriptUrl } from './models'
+import { loadBusinesses, loadInspectionsForLicense, filterBusinesses, defaultState, Business, gMapsScriptUrl } from './models'
 import { fuseOpts } from './models/search'
 import { Observable } from 'rxjs'
 import * as Fuse from 'fuse.js'
@@ -69,7 +69,7 @@ atom.lens(s => s.map)
   .filter(Boolean)
   .flatMap(map => Observable.fromEventPattern(f => map.addListener('bounds_changed', f)))
   .debounceTime(800)
-  .subscribe(() => loadDataFromRemote(atom))
+  .subscribe(() => loadBusinesses(atom))
 
 render(
   <Root state={atom} filteredBusinesses={filteredBusinesses} />,
