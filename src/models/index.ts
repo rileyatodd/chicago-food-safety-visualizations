@@ -131,12 +131,12 @@ const businessesQuery =
 export const loadBusinesses = (atom: Atom<AppState>) => {
   let bounds = atom.get().map.getBounds()
   let geoQuery = validateBounds(bounds) ? buildGeoQuery(bounds.toJSON()) : ''
-  atom.lens(x => x.ui.loadingBusinesses).set(true)
+  atom.lens('ui', 'loadingBusinesses').set(true)
   getJSON(remoteDataUrl + businessesQuery + geoQuery).fork(
     throwErr,
     data => {
-      atom.lens(x => x.ui.loadingBusinesses).set(false)
-      atom.lens(x => x.businesses).set(establishmentsByLicense(data))
+      atom.lens('ui', 'loadingBusinesses').set(false)
+      atom.lens('businesses').set(establishmentsByLicense(data))
     }
   )
 }

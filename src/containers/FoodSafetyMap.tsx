@@ -18,7 +18,7 @@ const renderMarker = (handleClick, selected, business) =>
   />
 
 let google = window['google']
-let LiftedGMap = lift(GMap as (props: {childs: any, refFn: any}) => JSX.Element)
+let LiftedGMap = lift(GMap as (props: {childs: JSX.Element[], refFn: any}) => JSX.Element)
 
 interface Props {
   selectedBusiness: Atom<string>
