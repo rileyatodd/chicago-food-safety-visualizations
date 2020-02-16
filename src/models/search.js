@@ -7,6 +7,6 @@ export const fuseOpts =
   , distance: 50
   , maxPatternLength: 32
   , minMatchCharLength: 1
-  , id: 'license_'
+  , id: 'license'
   , keys: [ "address"
           , "dba_name" ] }

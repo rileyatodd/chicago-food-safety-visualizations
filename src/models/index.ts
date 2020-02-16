@@ -49,22 +49,6 @@ export interface Inspection {
   violations: string
 }
 
-// Organizes possible filters into a queryable hierarchy
-let filters = {}
-
-// {filterType: filterName} -> [Lens]
-let filterLenses = compose(map(lensPath), toPairs)
-
-// [Lens] -> [Predicate]
-let viewsIntoFilters = map(flip(view)(filters))
-
-// {filterType: filterName} -> [Predicate]
-let activeFilters = compose(viewsIntoFilters, filterLenses)
-
-// {filterType: filterName} -> {license: Establishment} -> [Establishment]
-export const filterBusinesses =
-  (filterNames, data) => filter(allPass(activeFilters(filterNames)), values(data))
-
 interface LatLng {
   lat: number
   lng: number

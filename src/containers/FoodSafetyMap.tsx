@@ -1,7 +1,7 @@
 import * as React from 'react'
 import GMap from '../components/GMap'
 import { Marker } from 'react-google-maps'
-import { filterBusinesses, AppState, gMapsScriptUrl, Business } from 'models'
+import { AppState, gMapsScriptUrl, Business } from 'models'
 import Spinner from '../components/Spinner'
 import { F, Atom, lift } from '@grammarly/focal'
 import { Observable } from 'rxjs'

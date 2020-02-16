@@ -4,7 +4,7 @@ import { render } from 'react-dom'
 import Root from './containers/Root'
 import { Atom } from '@grammarly/focal'
 import { range, omit, map, chain, values, compose, prop } from 'ramda'
-import { loadBusinesses, loadInspectionsForLicense, filterBusinesses, defaultState, Business, gMapsScriptUrl } from './models'
+import { loadBusinesses, loadInspectionsForLicense, defaultState, Business, gMapsScriptUrl } from './models'
 import { fuseOpts } from './models/search'
 import { Observable } from 'rxjs'
 import { K } from 'src/util/util'
@@ -21,24 +21,17 @@ loadScript({ src: gMapsScriptUrl
 atom.view('mapBounds').filter(Boolean).take(1).subscribe(() => loadBusinesses(atom))
 
 let index: Observable<Fuse> = atom.view(x => x.businesses).map(
-  compose( data => new Fuse(data, fuseOpts)
-         , chain(prop('inspections'))
-         , values
-         )
-)
+  bizMap => new Fuse(values(bizMap), fuseOpts))
 
-let results = atom.view(x => x.ui.query)
-  .combineLatest(index)
-  .map(([ query, index ]) => new Set(index.search(query || "")))
-
+let results: Observable<string[]> = K(
+  atom.view('ui', 'query'), index,
+  (query, index) => index.search(query || ""))
 
 let filteredBusinesses: Observable<Business[]> = K(
   results, atom.view('ui'), atom.view('businesses'),
-  (results, ui, businesses) => {
-    let filteredBizs = filterBusinesses(ui.filters, businesses)
-    return ui.query ? filteredBizs.filter(x => results.has(x.license)) 
-                    : filteredBizs
-  }
+  (results, ui, businesses) =>
+    ui.query ? results.map(license => businesses[license])
+             : values(businesses)
 )
   .filter(Boolean)
 
