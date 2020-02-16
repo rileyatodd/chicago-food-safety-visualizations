@@ -50,9 +50,7 @@ export interface Inspection {
 }
 
 // Organizes possible filters into a queryable hierarchy
-let filters = {
-  
-}
+let filters = {}
 
 // {filterType: filterName} -> [Lens]
 let filterLenses = compose(map(lensPath), toPairs)
@@ -72,11 +70,9 @@ interface LatLng {
   lng: number
 }
 
-// Inspection -> LatLngLiteral
 const buildPosition = (i: Inspection): LatLng => ({ lat: parseFloat(i.latitude)
                                                   , lng: parseFloat(i.longitude) })
 
-// [Inspection] -> Establishment
 const inspectionsToEstablishment = (inspections: Inspection[]): Business => {
   let { license_, dba_name, address } = head(inspections)
 
@@ -90,7 +86,6 @@ const inspectionsToEstablishment = (inspections: Inspection[]): Business => {
   }
 }
 
-// [Inspection] -> {license: Establishment}
 export const establishmentsByLicense: 
 (is: Inspection[]) => {[license: string]: Business} = compose( map(inspectionsToEstablishment)
                                                              , groupBy(prop('license_')))

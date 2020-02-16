@@ -7,6 +7,7 @@ import { range, omit, map, chain, values, compose, prop } from 'ramda'
 import { loadBusinesses, loadInspectionsForLicense, filterBusinesses, defaultState, Business, gMapsScriptUrl } from './models'
 import { fuseOpts } from './models/search'
 import { Observable } from 'rxjs'
+import { K } from 'src/util/util'
 import * as Fuse from 'fuse.js'
 let { loadScript } = require('util')
 
@@ -31,12 +32,14 @@ let results = atom.view(x => x.ui.query)
   .map(([ query, index ]) => new Set(index.search(query || "")))
 
 
-let filteredBusinesses: Observable<Business[]> = results.combineLatest(atom)
-  .map(([ results, { ui, businesses } ]) => {
+let filteredBusinesses: Observable<Business[]> = K(
+  results, atom.view('ui'), atom.view('businesses'),
+  (results, ui, businesses) => {
     let filteredBizs = filterBusinesses(ui.filters, businesses)
     return ui.query ? filteredBizs.filter(x => results.has(x.license)) 
                     : filteredBizs
-  })
+  }
+)
   .filter(Boolean)
 
 let gMapsLoaded = atom.lens(s => s.ui.isGmapsLoaded).filter(Boolean)
