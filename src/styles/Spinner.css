@@ -7,5 +7,6 @@
 .spinner {
   display: inline-block;
   animation: spin 1s linear infinite;
-  font-size: 34px;
+  font-size: 35px;
+  line-height: 1;
 }
