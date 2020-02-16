@@ -5,6 +5,7 @@ import { filterBusinesses, AppState, gMapsScriptUrl, Business } from 'models'
 import Spinner from '../components/Spinner'
 import { F, Atom, lift } from '@grammarly/focal'
 import { Observable } from 'rxjs'
+import { K } from 'src/util/util'
 
 const blueMarkerUrl = '/images/map-marker.png'
 
@@ -38,8 +39,8 @@ export default class FoodSafetyMap extends React.Component<Props, any> {
         {isGmapsLoaded.view(loaded => loaded
           ? <LiftedGMap 
               childs={
-                Observable.combineLatest(filteredBusinesses, selectedBusiness, viewType)
-                  .map(([ businesses, selectedBiz, viewType ]) => 
+                K(filteredBusinesses, selectedBusiness, viewType,
+                  (businesses, selectedBiz, viewType) => 
                     businesses.filter(() => viewType === 'marker')
                       .map(bus => renderMarker(
                         () => selectedBusiness.set(bus.license),
