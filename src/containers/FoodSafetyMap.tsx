@@ -41,12 +41,13 @@ export default class FoodSafetyMap extends React.Component<Props, any> {
               childs={
                 K(filteredBusinesses, selectedBusiness, viewType,
                   (businesses, selectedBiz, viewType) => 
-                    businesses.filter(() => viewType === 'marker')
-                      .map(bus => renderMarker(
-                        () => selectedBusiness.set(bus.license),
-                        selectedBiz === bus.license,
-                        bus
-                      )))
+                    viewType === 'marker' 
+                      ? businesses.map(bus => renderMarker(
+                          () => selectedBusiness.set(bus.license),
+                          selectedBiz === bus.license,
+                          bus
+                        ))
+                      : [])
               }
               refFn={gMap => map.set(gMap)} 
             />
