@@ -5,12 +5,13 @@ import BusinessInfo from 'src/components/BusinessInfo'
 import FoodMapFilters from 'src/components/FoodMapFilters'
 import FoodSafetyMap from 'src/containers/FoodSafetyMap'
 import BusinessList from 'src/components/BusinessList'
+import Spinner from 'src/components/Spinner'
 import * as tabStyles from 'src/styles/Tabs.css'
 import * as styles from 'src/styles/Root.css'
 import * as cn from 'classnames'
 import { F, Atom, lift } from '@grammarly/focal'
 import { Observable } from 'rxjs'
-import { Business, AppState } from 'models'
+import { Business, AppState, loadBusinesses } from 'models'
 
 interface Props {
   state: Atom<AppState>,
@@ -45,9 +46,13 @@ export default function Root({ state, filteredBusinesses }: Props) {
           isGmapsLoaded={state.lens(s => s.ui.isGmapsLoaded)}
           map={state.lens(s => s.map)}
         />
+        <F.div className={styles.searchButtonContainer}>
+          {state.lens('ui', 'loadingBusinesses').view(loading => loading
+            ? <Spinner key="_" />
+            : <button key="" onClick={() => loadBusinesses(state)}>Search this area</button>)}
+        </F.div>
         <FoodMapFilters viewType={state.lens(s => s.ui.viewType)} 
-                        query={state.lens(s => s.ui.query)}
-                        loadingBusinesses={state.lens(s => s.ui.loadingBusinesses)} />
+                        query={state.lens(s => s.ui.query)} />
       </F.div>
       <div className={styles.tabContainer}>
         <div className={tabStyles.container}>

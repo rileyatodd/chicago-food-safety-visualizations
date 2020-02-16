@@ -1,5 +1,4 @@
 import * as React from 'react'
-import Spinner from 'src/components/Spinner'
 import * as styles from 'src/styles/FoodMapFilters.css'
 import * as btnGroupS from 'src/styles/ButtonGroup.css'
 import * as inputGroupS from 'src/styles/InputGroup.css'
@@ -10,13 +9,11 @@ import * as cn from 'classnames'
 interface Props {
   viewType: Atom<string>
   query: Atom<string>
-  loadingBusinesses: Atom<boolean>
 }
 
-export default function FoodMapFilters({ viewType, query, loadingBusinesses }: Props) {
+export default function FoodMapFilters({ viewType, query }: Props) {
   return (
     <F.div className={styles.container}>
-      {loadingBusinesses.view(loading => loading && <Spinner key="_" />)}
       <div className={cn(btnGroupS.buttonGroup, styles.viewSelector)}>
         <F.button onClick={() => viewType.set('marker')} 
                   className={viewType.view(type => cn({[btnGroupS.selected]: type === 'marker'}, btnGroupS.btn))}>

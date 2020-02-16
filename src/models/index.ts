@@ -13,6 +13,7 @@ export const gMapsScriptUrl = "https://maps.googleapis.com/maps/api/js?key=AIzaS
 
 export interface AppState {
   map: any
+  mapBounds: {south: number; north: number; east: number; west: number}
   ui: ui.State
   search: {
     results: any
@@ -23,6 +24,7 @@ export interface AppState {
 export const defaultState: AppState = {
   map: null,
   ui: ui.defaultUIState,
+  mapBounds: null,
   businesses: {},
   search: null
 }
@@ -84,7 +86,7 @@ const inspectionsToEstablishment = (inspections: Inspection[]): Business => {
     dba_name,
     address,
     failCount: sum(map(compose(parseInt, prop('failCount')), inspections)),
-    inspections
+    inspections: []
   }
 }
 
@@ -129,8 +131,8 @@ const businessesQuery =
   + '&$group=license_,latitude,longitude,address,dba_name'
 
 export const loadBusinesses = (atom: Atom<AppState>) => {
-  let bounds = atom.get().map.getBounds()
-  let geoQuery = validateBounds(bounds) ? buildGeoQuery(bounds.toJSON()) : ''
+  let bounds = atom.view('mapBounds').get()
+  let geoQuery = validateBounds(bounds) ? buildGeoQuery(bounds) : ''
   atom.lens('ui', 'loadingBusinesses').set(true)
   getJSON(remoteDataUrl + businessesQuery + geoQuery).fork(
     throwErr,

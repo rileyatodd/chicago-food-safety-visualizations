@@ -16,6 +16,9 @@ window['atom'] = atom
 loadScript({ src: gMapsScriptUrl
            , onload: () => atom.lens('ui', 'isGmapsLoaded').set(true) })
 
+// Load the businesses once the map is loaded and we can calculate the bounds
+atom.view('mapBounds').filter(Boolean).take(1).subscribe(() => loadBusinesses(atom))
+
 let index: Observable<Fuse> = atom.view(x => x.businesses).map(
   compose( data => new Fuse(data, fuseOpts)
          , chain(prop('inspections'))
@@ -37,6 +40,12 @@ let filteredBusinesses: Observable<Business[]> = results.combineLatest(atom)
   .filter(Boolean)
 
 let gMapsLoaded = atom.lens(s => s.ui.isGmapsLoaded).filter(Boolean)
+
+atom.view('map').filter(Boolean).take(1).subscribe(
+  map => window['google'].maps.event.addListener(
+    map,
+    'bounds_changed',
+    () => atom.lens('mapBounds').set(map.getBounds().toJSON())))
 
 let heatMap = gMapsLoaded
   .map(() => new window['google'].maps.visualization.HeatmapLayer({
@@ -60,12 +69,6 @@ Observable.combineLatest(
 atom.lens(s => s.ui.selectedBusiness).filter(Boolean).subscribe(
   license => loadInspectionsForLicense(atom, license)
 )
-
-atom.lens(s => s.map)
-  .filter(Boolean)
-  .flatMap(map => Observable.fromEventPattern(f => map.addListener('bounds_changed', f)))
-  .debounceTime(800)
-  .subscribe(() => loadBusinesses(atom))
 
 render(
   <Root state={atom} filteredBusinesses={filteredBusinesses} />,

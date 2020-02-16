@@ -11,6 +11,11 @@
   color: #2d3031;
 }
 
+.searchButtonContainer {
+  margin: 10px;
+  text-align: center;
+}
+
 .root input[type='checkbox']:checked:after {
   font-family: FontAwesome;
   content: "\f00c";
