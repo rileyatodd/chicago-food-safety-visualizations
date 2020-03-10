@@ -1,5 +1,4 @@
 var path = require('path')
-// var BundleAnalyzerPlugin  = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const { TsConfigPathsPlugin, CheckerPlugin } = require('awesome-typescript-loader');
 
@@ -8,7 +7,6 @@ module.exports =
 , devtool: 'source-map'
 , plugins: 
   [ new UglifyJSPlugin({sourceMap: true})
-  // , new BundleAnalyzerPlugin()
   , new TsConfigPathsPlugin()
   , new CheckerPlugin() ]
 , output:
