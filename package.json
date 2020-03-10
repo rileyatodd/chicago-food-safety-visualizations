@@ -20,7 +20,7 @@
     "moment": "^2.13.0",
     "ramda": "^0.20.1",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "react-dom": "^16.2.1",
     "react-google-maps": "^7.3.0",
     "recompose": "^0.25.0",
     "rxjs": "^5.5.7"
